@@ -1,0 +1,12 @@
+{
+  "name": "Orçamento Fonsecar",
+  "short_name": "Fonsecar",
+  "start_url": "./orcamento-pwa.html",
+  "display": "standalone",
+  "background_color": "#f2ede7",
+  "theme_color": "#c85a07",
+  "lang": "pt-BR",
+  "icons": [
+    {"src": "./assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
+  ]
+}
