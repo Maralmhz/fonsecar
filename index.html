@@ -331,9 +331,18 @@
                 <tbody id="itemsBody"></tbody>
             </table>
 
-            <div class="total-row">
+            <div class="total-row" style="flex-wrap:wrap; gap:10px;">
                 <span class="total-label">TOTAL DO ORÇAMENTO</span>
-                <span class="total-value" id="totalDisplay">R$ 0,00</span>
+                <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:flex-end;">
+                    <label id="labelPacote" style="display:flex; align-items:center; gap:6px; font-family:'Oswald',sans-serif; font-size:12px; font-weight:600; letter-spacing:1px; cursor:pointer; opacity:0.85;">
+                        <input type="checkbox" id="chkPacote" onchange="togglePacote(this.checked)" style="width:16px;height:16px;cursor:pointer;accent-color:#fff;">
+                        PACOTE FECHADO
+                    </label>
+                    <span class="total-value" id="totalDisplay">R$ 0,00</span>
+                    <input id="inputPacote" type="text" placeholder="Ex: 1.500,00"
+                        style="display:none; font-family:'Bebas Neue',sans-serif; font-size:26px; color:white; background:transparent; border:none; border-bottom:2px solid rgba(255,255,255,0.6); outline:none; width:160px; text-align:right;"
+                        oninput="atualizarPacote(this.value)">
+                </div>
             </div>
 
             <div class="validade-block" id="validadeTexto">
@@ -418,15 +427,50 @@
             rows.push(tr);
         }
 
+        // Converte valor BR (1.500,00 ou 1500,00 ou 1500.00) para número
+        function parseBR(str) {
+            if (!str) return 0;
+            str = str.trim();
+            // Remove pontos de milhar, troca vírgula decimal por ponto
+            if (str.includes(',')) {
+                str = str.replace(/\./g, '').replace(',', '.');
+            }
+            return parseFloat(str) || 0;
+        }
+
+        let modoPackFechado = false;
+
         function calcTotal() {
+            if (modoPackFechado) return;
             let total = 0;
             document.querySelectorAll('.item-row').forEach(tr => {
-                const q = parseFloat(tr.querySelector('.inp-qty').value.replace(',','.')) || 0;
-                const v = parseFloat(tr.querySelector('.inp-val').value.replace(',','.')) || 0;
+                const q = parseBR(tr.querySelector('.inp-qty').value);
+                const v = parseBR(tr.querySelector('.inp-val').value);
                 total += q * v;
             });
-            document.getElementById('totalDisplay').textContent = 'R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits:2});
+            document.getElementById('totalDisplay').textContent = 'R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
             return total;
+        }
+
+        function togglePacote(ativo) {
+            modoPackFechado = ativo;
+            const disp = document.getElementById('totalDisplay');
+            const inp = document.getElementById('inputPacote');
+            if (ativo) {
+                disp.style.display = 'none';
+                inp.style.display = 'inline-block';
+                inp.focus();
+            } else {
+                disp.style.display = 'inline-block';
+                inp.style.display = 'none';
+                inp.value = '';
+                calcTotal();
+            }
+        }
+
+        function atualizarPacote(val) {
+            // Mostra o valor exatamente como digitado no totalDisplay (para o PDF pegar)
+            // O totalDisplay fica oculto mas o PDF vai ler o inputPacote diretamente
         }
 
         function newOrcamento() {
@@ -576,7 +620,15 @@
             doc.setFontSize(12);
             doc.text('TOTAL DO ORÇAMENTO', 20, y + 10);
             doc.setFontSize(16);
-            doc.text(document.getElementById('totalDisplay').textContent, 192, y + 10, { align: 'right' });
+            const isPacote = document.getElementById('chkPacote').checked;
+            let totalText;
+            if (isPacote) {
+                const rawPacote = document.getElementById('inputPacote').value.trim();
+                totalText = rawPacote ? 'R$ ' + rawPacote : 'R$ 0,00';
+            } else {
+                totalText = document.getElementById('totalDisplay').textContent;
+            }
+            doc.text(totalText, 192, y + 10, { align: 'right' });
 
             // Validade
             y += 20;
