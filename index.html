@@ -40,7 +40,6 @@
     overscroll-behavior: none;
   }
 
-  /* ── TOP BAR ── */
   .topbar {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     background: var(--dark);
@@ -51,27 +50,19 @@
     box-shadow: 0 2px 20px rgba(200,75,0,0.4);
   }
 
-  .topbar-logo {
-    display: flex; align-items: center; gap: 10px;
-  }
+  .topbar-logo { display: flex; align-items: center; gap: 10px; }
 
   .logo-badge {
     width: 38px; height: 38px;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
-
-  .logo-badge img {
-    width: 38px; height: 38px;
-    object-fit: contain;
-  }
+  .logo-badge img { width: 38px; height: 38px; object-fit: contain; }
 
   .topbar h1 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px; color: var(--white); letter-spacing: 2px;
-    line-height: 1;
+    font-size: 22px; color: var(--white); letter-spacing: 2px; line-height: 1;
   }
-
   .topbar h1 span {
     display: block; font-family: 'Oswald', sans-serif;
     font-size: 10px; color: var(--orange-pale); letter-spacing: 3px;
@@ -79,17 +70,14 @@
   }
 
   .btn-new {
-    background: var(--orange);
-    border: none; color: white;
+    background: var(--orange); border: none; color: white;
     font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 600;
     letter-spacing: 1px; text-transform: uppercase;
     padding: 8px 14px; border-radius: 4px; cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-    white-space: nowrap;
+    transition: background 0.2s, transform 0.1s; white-space: nowrap;
   }
   .btn-new:active { background: var(--orange-dark); transform: scale(0.97); }
 
-  /* ── MAIN ── */
   main {
     margin-top: 56px;
     padding: 0 0 100px 0;
@@ -97,7 +85,6 @@
     margin-left: auto; margin-right: auto;
   }
 
-  /* ── DOCUMENT WRAPPER ── */
   .doc {
     background: var(--cream);
     margin: 12px 10px;
@@ -106,7 +93,6 @@
     box-shadow: 0 4px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(200,75,0,0.3);
   }
 
-  /* ── HEADER ── */
   .doc-header {
     background: var(--white);
     display: grid;
@@ -121,18 +107,9 @@
     position: relative;
   }
 
-  .logo-shield {
-    width: 100%;
-    max-width: 110px;
-  }
-
-  /* ── LOGO IMG ── */
   .logo-shield-img {
-    width: 100%;
-    max-width: 110px;
-    height: auto;
-    object-fit: contain;
-    display: block;
+    width: 100%; max-width: 110px;
+    height: auto; object-fit: contain; display: block;
   }
 
   .header-info-col {
@@ -143,15 +120,13 @@
   .orcamento-title {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 38px; color: var(--orange);
-    letter-spacing: 3px; line-height: 1;
-    margin-bottom: 6px;
+    letter-spacing: 3px; line-height: 1; margin-bottom: 6px;
   }
 
   .field-group {
     display: flex; align-items: baseline; gap: 6px;
     border-bottom: 1.5px solid var(--border);
-    padding: 2px 0;
-    margin-bottom: 3px;
+    padding: 2px 0; margin-bottom: 3px;
   }
 
   .field-label {
@@ -165,14 +140,11 @@
     border: none; background: transparent;
     font-family: 'Share Tech Mono', monospace;
     font-size: 12px; color: var(--dark);
-    width: 100%; outline: none;
-    padding: 1px 2px;
+    width: 100%; outline: none; padding: 1px 2px;
   }
-
   .field-input::placeholder { color: #c4b09a; font-style: italic; font-size: 10px; }
   .field-input:focus { background: rgba(200,75,0,0.06); border-radius: 2px; }
 
-  /* ── VEHICLE ROW ── */
   .vehicle-row {
     background: var(--white);
     padding: 8px 16px;
@@ -180,48 +152,24 @@
     border-bottom: 2px solid var(--orange);
     flex-wrap: wrap;
   }
+  .vehicle-row .field-group { flex: 1; min-width: 80px; }
+  .vehicle-row .field-group:first-child { flex: 3; }
 
-  .vehicle-row .field-group {
-    flex: 1; min-width: 80px;
-  }
-
-  .vehicle-row .field-group:first-child {
-    flex: 3;
-  }
-
-  /* ── TABLE ── */
-  .items-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .items-table thead tr {
-    background: var(--orange);
-  }
-
+  .items-table { width: 100%; border-collapse: collapse; }
+  .items-table thead tr { background: var(--orange); }
   .items-table thead th {
     font-family: 'Oswald', sans-serif; font-weight: 700;
     font-size: 11px; color: white; letter-spacing: 1.5px;
-    text-transform: uppercase; padding: 8px 8px;
-    text-align: left;
+    text-transform: uppercase; padding: 8px 8px; text-align: left;
   }
-
   .items-table thead th:nth-child(2),
-  .items-table thead th:nth-child(3) {
-    text-align: center;
-  }
-
+  .items-table thead th:nth-child(3) { text-align: center; }
   .items-table thead th:nth-child(1) { width: 36px; }
   .items-table thead th:nth-child(2) { width: auto; }
   .items-table thead th:nth-child(3) { width: 80px; }
   .items-table thead th:nth-child(4) { width: 90px; }
 
-  .item-row td {
-    border-bottom: 1px solid var(--border);
-    padding: 0;
-    vertical-align: middle;
-  }
-
+  .item-row td { border-bottom: 1px solid var(--border); padding: 0; vertical-align: middle; }
   .item-row:nth-child(odd) td { background: var(--row-odd); }
   .item-row:nth-child(even) td { background: var(--row-even); }
   .item-row:last-child td { border-bottom: none; }
@@ -229,59 +177,71 @@
   .item-row .num {
     font-family: 'Oswald', sans-serif; font-weight: 600;
     font-size: 11px; color: var(--orange-dark);
-    text-align: center; padding: 0 4px;
-    user-select: none;
+    text-align: center; padding: 0 4px; user-select: none;
   }
 
   .item-row input {
     border: none; background: transparent;
     font-family: 'Share Tech Mono', monospace;
     font-size: 12px; color: var(--dark);
-    width: 100%; outline: none;
-    padding: 7px 6px;
+    width: 100%; outline: none; padding: 7px 6px;
   }
-
   .item-row input::placeholder { color: #cbb89e; font-size: 10px; }
   .item-row input:focus { background: rgba(200,75,0,0.07); }
-
   .item-row .inp-qty { text-align: center; }
   .item-row .inp-val { text-align: right; font-size: 12px; }
 
-  /* ── TOTAL ROW ── */
   .total-row {
     background: var(--orange) !important;
     display: flex; align-items: center; justify-content: space-between;
     padding: 10px 16px;
   }
-
   .total-row td { background: transparent !important; border: none !important; }
-
   .total-label {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 18px; color: white; letter-spacing: 2px;
   }
-
   .total-value {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px; color: white; letter-spacing: 1px;
-    text-align: right;
+    font-size: 22px; color: white; letter-spacing: 1px; text-align: right;
   }
 
-  /* ── FOOTER ── */
+  /* ── VALIDADE ── */
+  .validade-block {
+    background: var(--cream-dark);
+    border-top: 2px dashed var(--border);
+    padding: 10px 16px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 11px;
+    color: var(--dark);
+    line-height: 1.6;
+  }
+  .validade-block strong {
+    font-family: 'Oswald', sans-serif;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--orange-dark);
+    display: block;
+    margin-bottom: 3px;
+  }
+  .validade-datas {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--orange-dark);
+    font-weight: bold;
+  }
+
   .doc-footer {
     background: var(--dark);
     padding: 12px 16px;
     display: flex; flex-direction: column; gap: 4px;
   }
-
   .footer-item {
     display: flex; align-items: center; gap: 8px;
-    font-family: 'Roboto', sans-serif; font-size: 11px;
-    color: var(--cream);
+    font-family: 'Roboto', sans-serif; font-size: 11px; color: var(--cream);
   }
-
   .footer-item svg { flex-shrink: 0; }
-
   .footer-phone {
     background: var(--orange);
     margin: 4px -16px -12px;
@@ -291,19 +251,16 @@
     font-size: 20px; color: white; letter-spacing: 2px;
   }
 
-  /* ── NOTES ── */
   .obs-section {
     padding: 10px 16px;
     background: var(--white);
     border-top: 1px solid var(--border);
   }
-
   .obs-label {
     font-family: 'Oswald', sans-serif; font-weight: 600;
     font-size: 10px; color: var(--orange-dark); letter-spacing: 1.5px;
     text-transform: uppercase; margin-bottom: 4px;
   }
-
   .obs-textarea {
     width: 100%; border: 1px dashed var(--border);
     border-radius: 3px; background: var(--row-odd);
@@ -312,7 +269,6 @@
     min-height: 56px;
   }
 
-  /* ── BOTTOM ACTION BAR ── */
   .action-bar {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
     background: var(--dark2);
@@ -322,10 +278,7 @@
     max-width: 600px; margin: 0 auto;
     left: 50%; transform: translateX(-50%);
   }
-
-  @media (max-width: 600px) {
-    .action-bar { left: 0; transform: none; }
-  }
+  @media (max-width: 600px) { .action-bar { left: 0; transform: none; } }
 
   .btn {
     flex: 1; border: none; border-radius: 5px;
@@ -335,34 +288,20 @@
     transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px;
   }
   .btn:active { transform: scale(0.97); }
-
-  .btn-save {
-    background: transparent;
-    border: 2px solid var(--orange);
-    color: var(--orange-pale);
-  }
+  .btn-save { background: transparent; border: 2px solid var(--orange); color: var(--orange-pale); }
   .btn-save:active { background: rgba(200,75,0,0.15); }
-
-  .btn-pdf {
-    background: var(--orange);
-    color: white;
-    box-shadow: 0 4px 16px rgba(200,75,0,0.4);
-    flex: 1.6;
-  }
+  .btn-pdf { background: var(--orange); color: white; box-shadow: 0 4px 16px rgba(200,75,0,0.4); flex: 1.6; }
   .btn-pdf:active { background: var(--orange-dark); }
 
-  /* ── TOAST ── */
   .toast {
     position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
     background: var(--dark); border: 1px solid var(--orange);
     color: var(--cream); font-family: 'Oswald', sans-serif; font-size: 13px;
     letter-spacing: 1px; padding: 10px 20px; border-radius: 20px;
-    opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap;
-    z-index: 200;
+    opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; z-index: 200;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  /* ── ADD ROW BTN ── */
   .add-row-btn {
     width: 100%; background: transparent; border: none;
     font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 600;
@@ -375,17 +314,14 @@
   .add-row-btn:hover { background: rgba(200,75,0,0.06); }
   .add-row-btn:active { background: rgba(200,75,0,0.14); }
 
-  /* ── REMOVE ROW ── */
   .btn-remove-row {
     background: none; border: none; cursor: pointer;
     color: #c4a080; font-size: 14px; padding: 4px 6px;
-    opacity: 0.5; transition: opacity 0.2s, color 0.2s;
-    display: none;
+    opacity: 0.5; transition: opacity 0.2s, color 0.2s; display: none;
   }
   .item-row:hover .btn-remove-row { display: block; }
   .btn-remove-row:hover { opacity: 1; color: var(--orange); }
 
-  /* ── GEAR DECORATION ── */
   .gear-deco {
     position: absolute; right: -10px; bottom: -10px;
     opacity: 0.08; pointer-events: none;
@@ -394,7 +330,6 @@
 </head>
 <body>
 
-<!-- TOP BAR -->
 <header class="topbar">
   <div class="topbar-logo">
     <div class="logo-badge">
@@ -405,31 +340,25 @@
   <button class="btn-new" onclick="newOrcamento()">+ NOVO</button>
 </header>
 
-<!-- MAIN CONTENT -->
 <main>
   <div class="doc" id="docRoot">
 
-    <!-- HEADER -->
     <div class="doc-header">
       <div class="header-logo-col">
         <img class="logo-shield-img" src="logo.png" alt="Fonsecar Logo">
       </div>
-
       <div class="header-info-col">
         <div class="orcamento-title">ORÇAMENTO</div>
-
         <div class="field-group">
           <span class="field-label">Nº</span>
           <input class="field-input" id="num" style="width:120px" placeholder="PLACA-DDMM" maxlength="14">
           <span class="field-label" style="margin-left:12px">Data</span>
-          <input class="field-input" id="data" type="date" style="width:130px" oninput="gerarNumero()">
+          <input class="field-input" id="data" type="date" style="width:130px" oninput="gerarNumero(); atualizarValidade();">
         </div>
-
         <div class="field-group">
           <span class="field-label">Cliente</span>
           <input class="field-input" id="cliente" placeholder="Nome completo">
         </div>
-
         <div class="field-group">
           <span class="field-label">Telefone</span>
           <input class="field-input" id="telefone" placeholder="(31) 9 0000-0000" inputmode="tel">
@@ -437,7 +366,6 @@
       </div>
     </div>
 
-    <!-- VEHICLE ROW -->
     <div class="vehicle-row">
       <div class="field-group" style="flex:3">
         <span class="field-label">Veículo</span>
@@ -453,7 +381,6 @@
       </div>
     </div>
 
-    <!-- ITEMS TABLE -->
     <table class="items-table" id="itemsTable">
       <thead>
         <tr>
@@ -463,9 +390,7 @@
           <th>Valor (R$)</th>
         </tr>
       </thead>
-      <tbody id="itemsBody">
-        <!-- rows injected by JS -->
-      </tbody>
+      <tbody id="itemsBody"></tbody>
     </table>
 
     <button class="add-row-btn" onclick="addRow()">
@@ -473,13 +398,11 @@
       Adicionar Item
     </button>
 
-    <!-- OBS -->
     <div class="obs-section">
       <div class="obs-label">Observações</div>
       <textarea class="obs-textarea" id="obs" placeholder="Informações adicionais, garantias, prazo de execução..."></textarea>
     </div>
 
-    <!-- TOTAL -->
     <table class="items-table">
       <tfoot>
         <tr>
@@ -493,7 +416,14 @@
       </tfoot>
     </table>
 
-    <!-- FOOTER -->
+    <!-- BLOCO DE VALIDADE -->
+    <div class="validade-block" id="validadeBlock">
+      <strong>⚠️ Atenção</strong>
+      <span id="validadeTexto"></span>
+      <br>Após aprovação, podem ocorrer complementos de orçamento durante a desmontagem,
+      situação em que o cliente será previamente comunicado para nova autorização.
+    </div>
+
     <div class="doc-footer">
       <div class="footer-item">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C84B00" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -509,10 +439,9 @@
       </div>
     </div>
 
-  </div><!-- /doc -->
+  </div>
 </main>
 
-<!-- ACTION BAR -->
 <div class="action-bar">
   <button class="btn btn-save" onclick="saveLocal()">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
@@ -527,33 +456,52 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ── STATE ──
 let rowCount = 0;
 let rows = [];
 
-// ── GERAR NÚMERO AUTOMÁTICO (PLACA-DDMM) ──
+// ── HELPERS DE DATA ──
+function formatarData(dateObj) {
+  const d = String(dateObj.getDate()).padStart(2, '0');
+  const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const a = dateObj.getFullYear();
+  return `${d}/${m}/${a}`;
+}
+
+function calcVencimento(dataInput) {
+  if (!dataInput) return null;
+  const base = new Date(dataInput + 'T12:00:00');
+  base.setDate(base.getDate() + 15);
+  return base;
+}
+
+function atualizarValidade() {
+  const dataVal = document.getElementById('data').value;
+  const span = document.getElementById('validadeTexto');
+  if (!dataVal) {
+    span.innerHTML = 'Este orçamento é válido por <strong>15 dias</strong> a partir da data de emissão.';
+    return;
+  }
+  const emissao = new Date(dataVal + 'T12:00:00');
+  const venc = calcVencimento(dataVal);
+  span.innerHTML = `Este orçamento é válido por <strong>15 dias</strong> `
+    + `(<span class="validade-datas">${formatarData(emissao)}</span>), `
+    + `vencendo em <span class="validade-datas">${formatarData(venc)}</span>.`;
+}
+
+// ── NÚMERO AUTOMÁTICO ──
 function gerarNumero() {
   const placa = document.getElementById('placa').value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-  const dataVal = document.getElementById('data').value; // YYYY-MM-DD
+  const dataVal = document.getElementById('data').value;
   if (!placa && !dataVal) return;
-
   let ddmm = '';
   if (dataVal) {
-    const parts = dataVal.split('-'); // [YYYY, MM, DD]
-    if (parts.length === 3) {
-      ddmm = parts[2] + parts[1]; // DDMM
-    }
+    const parts = dataVal.split('-');
+    if (parts.length === 3) ddmm = parts[2] + parts[1];
   }
-
   let num = '';
-  if (placa && ddmm) {
-    num = placa + '-' + ddmm;
-  } else if (placa) {
-    num = placa;
-  } else if (ddmm) {
-    num = ddmm;
-  }
-
+  if (placa && ddmm) num = placa + '-' + ddmm;
+  else if (placa) num = placa;
+  else if (ddmm) num = ddmm;
   document.getElementById('num').value = num;
 }
 
@@ -568,26 +516,25 @@ document.addEventListener('DOMContentLoaded', () => {
       loadDraft(d);
     } catch(e) {
       gerarNumero();
+      atualizarValidade();
       for (let i = 0; i < 10; i++) addRow();
     }
   } else {
     gerarNumero();
+    atualizarValidade();
     for (let i = 0; i < 10; i++) addRow();
   }
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  }
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 });
 
 // ── ROWS ──
 function addRow(desc = '', qty = '', val = '') {
   rowCount++;
-  const num = rowCount;
   const tbody = document.getElementById('itemsBody');
   const tr = document.createElement('tr');
   tr.className = 'item-row';
-  tr.dataset.id = num;
+  tr.dataset.id = rowCount;
   tr.innerHTML = `
     <td class="num">${String(rows.length + 1).padStart(2,'0')}</td>
     <td><input class="inp-desc" placeholder="Descrição do serviço ou peça..." value="${esc(desc)}" oninput="calcTotal()"></td>
@@ -616,7 +563,6 @@ function renumberRows() {
   });
 }
 
-// ── CALC ──
 function calcTotal() {
   let total = 0;
   document.querySelectorAll('#itemsBody .item-row').forEach(tr => {
@@ -670,6 +616,7 @@ function loadDraft(d) {
   document.getElementById('ano').value = d.ano || '';
   document.getElementById('placa').value = d.placa || '';
   document.getElementById('obs').value = d.obs || '';
+  atualizarValidade();
   const items = d.items || [];
   const total = Math.max(items.length, 10);
   for (let i = 0; i < total; i++) {
@@ -687,12 +634,13 @@ function newOrcamento() {
   ['cliente','telefone','veiculo','ano','placa','obs','num'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('data').valueAsDate = new Date();
   gerarNumero();
+  atualizarValidade();
   for (let i = 0; i < 10; i++) addRow();
   calcTotal();
   showToast('Novo orçamento criado');
 }
 
-// ── PDF GENERATION ──
+// ── PDF ──
 function gerarPDF() {
   const d = gatherData();
   const { jsPDF } = window.jspdf;
@@ -702,19 +650,15 @@ function gerarPDF() {
   const margin = 12;
   const contentW = W - margin * 2;
 
-  // ── BACKGROUND ──
   doc.setFillColor(245, 240, 232);
   doc.rect(0, 0, W, H, 'F');
 
-  // ── HEADER BAND ──
   doc.setFillColor(200, 75, 0);
   doc.rect(0, 0, W, 52, 'F');
 
-  // ── LOGO AREA (dark panel) ──
   doc.setFillColor(26, 10, 0);
   doc.rect(0, 0, 60, 52, 'F');
 
-  // Embed logo.png into PDF
   const logoImg = new Image();
   logoImg.src = 'logo.png';
   try {
@@ -728,31 +672,26 @@ function gerarPDF() {
     doc.text('FONSECAR', 30, 13.5, { align: 'center' });
   }
 
-  // ── ORÇAMENTO TITLE ──
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(30);
   doc.text('ORÇAMENTO', 130, 22, { align: 'center' });
 
-  // Numero
   doc.setFontSize(10);
   doc.setTextColor(255, 220, 180);
   doc.text('Nº ' + (d.num || '----'), 130, 32, { align: 'center' });
 
-  // ── INFO FIELDS (on orange) ──
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8);
   const infoY = 40;
   doc.text('DATA:', 63, infoY);
   doc.text('CLIENTE:', 63, infoY + 7);
-
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   const dataStr = d.data ? new Date(d.data + 'T12:00:00').toLocaleDateString('pt-BR') : '';
   doc.text(dataStr, 82, infoY);
   doc.text(d.cliente || '', 82, infoY + 7);
-
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8);
   doc.text('TELEFONE:', 150, infoY);
@@ -760,7 +699,6 @@ function gerarPDF() {
   doc.setFontSize(9);
   doc.text(d.telefone || '', 170, infoY);
 
-  // ── VEHICLE ROW ──
   doc.setFillColor(255, 255, 255);
   doc.rect(0, 52, W, 12, 'F');
   doc.setDrawColor(200, 75, 0);
@@ -775,7 +713,6 @@ function gerarPDF() {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
   doc.text(d.veiculo || '', margin + 22, 59.5);
-
   doc.setTextColor(158, 58, 0);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8);
@@ -784,7 +721,6 @@ function gerarPDF() {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
   doc.text(d.ano || '', 133, 59.5);
-
   doc.setTextColor(158, 58, 0);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8);
@@ -794,7 +730,6 @@ function gerarPDF() {
   doc.setFontSize(10);
   doc.text((d.placa || '').toUpperCase(), 170, 59.5);
 
-  // ── TABLE ──
   const tableTop = 66;
   const colX = [margin, margin + 12, margin + 12 + 112, margin + 12 + 112 + 30];
   const colW = [12, 112, 30, 34];
@@ -864,6 +799,7 @@ function gerarPDF() {
     y += 18;
   }
 
+  // TOTAL
   y += 2;
   doc.setFillColor(200, 75, 0);
   doc.rect(margin, y, contentW, 11, 'F');
@@ -871,7 +807,6 @@ function gerarPDF() {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);
   doc.text('TOTAL', margin + 10, y + 7.5);
-
   let total = 0;
   (d.items || []).forEach(item => {
     const qty = parseFloat((item.qty || '1').replace(',', '.')) || 1;
@@ -881,34 +816,68 @@ function gerarPDF() {
   const totalStr = 'R$ ' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
   doc.setFontSize(14);
   doc.text(totalStr, margin + contentW - 4, y + 7.5, { align: 'right' });
+  y += 13;
 
+  // VALIDADE
+  const venc = calcVencimento(d.data);
+  const emissaoStr = d.data ? formatarData(new Date(d.data + 'T12:00:00')) : '...';
+  const vencStr = venc ? formatarData(venc) : '...';
+
+  doc.setFillColor(237, 228, 212);
+  doc.rect(margin, y, contentW, 22, 'F');
+  doc.setDrawColor(200, 144, 96);
+  doc.setLineWidth(0.4);
+  doc.setLineDash([2, 2]);
+  doc.rect(margin, y, contentW, 22);
+  doc.setLineDash([]);
+
+  doc.setTextColor(158, 58, 0);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.text('ATENCAO:', margin + 3, y + 6);
+  doc.setTextColor(26, 10, 0);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.text(
+    `Este orcamento e valido por 15 dias (${emissaoStr}), vencendo em ${vencStr}.`,
+    margin + 3, y + 12
+  );
+  const linha2 = doc.splitTextToSize(
+    'Apos aprovacao, podem ocorrer complementos de orcamento durante a desmontagem, '
+    + 'situacao em que o cliente sera previamente comunicado para nova autorizacao.',
+    contentW - 6
+  );
+  doc.text(linha2[0] || '', margin + 3, y + 18);
+  if (linha2[1]) doc.text(linha2[1], margin + 3, y + 22.5);
+  y += 25;
+
+  // RODAPÉ
   const footerY = H - 32;
   doc.setFillColor(26, 10, 0);
   doc.rect(0, footerY, W, 32, 'F');
   doc.setTextColor(245, 240, 232);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8.5);
-  doc.text('📍  Rua Maranhão, 13, Bairro Industrial — Contagem, MG', margin, footerY + 8);
-  doc.text('      CEP: 32.230-440   |   CNPJ: 48.549.990/0001-48', margin, footerY + 15);
+  doc.text('Rua Maranhão, 13, Bairro Industrial - Contagem, MG', margin, footerY + 8);
+  doc.text('CEP: 32.230-440   |   CNPJ: 48.549.990/0001-48', margin, footerY + 15);
   doc.setFillColor(200, 75, 0);
   doc.rect(0, footerY + 20, W, 12, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(13);
-  doc.text('📞  31 99273-0811', margin, footerY + 28);
+  doc.text('31 99273-0811', margin, footerY + 28);
 
   doc.setDrawColor(200, 75, 0);
   doc.setLineWidth(1.5);
   doc.rect(3, 3, W - 6, H - 6);
 
   const numSafe = (d.num || 'orcamento').replace(/[^a-zA-Z0-9]/g, '_');
-  const cliente = (d.cliente || 'cliente').replace(/\s+/g, '_').toLowerCase();
-  doc.save(`fonsecar_${numSafe}_${cliente}.pdf`);
+  const clienteNome = (d.cliente || 'cliente').replace(/\s+/g, '_').toLowerCase();
+  doc.save(`fonsecar_${numSafe}_${clienteNome}.pdf`);
 
   showToast('✓ PDF gerado com sucesso!');
 }
 
-// ── TOAST ──
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -916,7 +885,6 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-// ── PLACA UPPERCASE ──
 document.addEventListener('input', e => {
   if (e.target.id === 'placa') e.target.value = e.target.value.toUpperCase();
 });
