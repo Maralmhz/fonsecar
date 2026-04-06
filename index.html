@@ -43,9 +43,9 @@ html, body { height: 100%; background: #1a1a1a; font-family: Arial, sans-serif; 
 
 .f {
   position: absolute; background: transparent; border: none;
-  border-bottom: 1.5px solid rgba(139,60,5,0.5); outline: none;
-  font-family: Arial, sans-serif; font-size: clamp(8px, 2vw, 12px);
-  color: #1a1a1a; padding: 0 2px 1px; line-height: 1; height: 2.8%;
+  border-bottom: 1.5px solid rgba(139,60,5,0.45); outline: none;
+  font-family: Arial, sans-serif; font-size: clamp(7px, 1.9vw, 11px);
+  color: #1a1a1a; padding: 0 2px 1px; line-height: 1; height: 2.6%;
 }
 .f:focus { border-bottom-color: var(--orange); background: rgba(192,68,10,0.07); border-radius: 2px; }
 .f.cell { border-bottom: none; text-align: left; }
@@ -54,7 +54,7 @@ html, body { height: 100%; background: #1a1a1a; font-family: Arial, sans-serif; 
 
 #total-display {
   position: absolute; font-family: Arial, sans-serif;
-  font-size: clamp(8px, 2vw, 12px); font-weight: 700; color: #fff;
+  font-size: clamp(7px, 1.9vw, 11px); font-weight: 700; color: #fff;
   text-align: right; pointer-events: none;
   display: flex; align-items: center; justify-content: flex-end; padding-right: 3px;
 }
@@ -103,37 +103,46 @@ html, body { height: 100%; background: #1a1a1a; font-family: Arial, sans-serif; 
 <div id="form-wrap">
 
 <img id="bg" src="assets/modelo.jpeg" alt="Orçamento Fonsecar" crossorigin="anonymous">
-  
-  <!-- CABEÇALHO -->
-  <input class="f" id="data"     type="text" placeholder="dd/mm/aaaa" style="top:17.6%;left:50%;width:44%;">
-  <input class="f" id="cliente"  type="text" placeholder=""           style="top:21.7%;left:50%;width:44%;">
-  <input class="f" id="telefone" type="tel"  placeholder=""           style="top:25.9%;left:50%;width:44%;">
-  <input class="f" id="veiculo"  type="text" placeholder=""           style="top:30.5%;left:13%;width:41%;">
-  <input class="f" id="ano"      type="text" placeholder=""           style="top:30.5%;left:60%;width:12%;">
-  <input class="f" id="placa"    type="text" placeholder=""           style="top:30.5%;left:78%;width:16%;">
 
-  <!-- LINHAS 01-18 -->
-  <input class="f cell" id="d1"  type="text" style="top:36.05%;left:8.5%;width:57%;"><input class="f cell-num" id="q1"  type="text" style="top:36.05%;left:66.5%;width:13%;"><input class="f cell-val" id="v1"  type="text" style="top:36.05%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d2"  type="text" style="top:39.21%;left:8.5%;width:57%;"><input class="f cell-num" id="q2"  type="text" style="top:39.21%;left:66.5%;width:13%;"><input class="f cell-val" id="v2"  type="text" style="top:39.21%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d3"  type="text" style="top:42.37%;left:8.5%;width:57%;"><input class="f cell-num" id="q3"  type="text" style="top:42.37%;left:66.5%;width:13%;"><input class="f cell-val" id="v3"  type="text" style="top:42.37%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d4"  type="text" style="top:45.53%;left:8.5%;width:57%;"><input class="f cell-num" id="q4"  type="text" style="top:45.53%;left:66.5%;width:13%;"><input class="f cell-val" id="v4"  type="text" style="top:45.53%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d5"  type="text" style="top:48.69%;left:8.5%;width:57%;"><input class="f cell-num" id="q5"  type="text" style="top:48.69%;left:66.5%;width:13%;"><input class="f cell-val" id="v5"  type="text" style="top:48.69%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d6"  type="text" style="top:51.85%;left:8.5%;width:57%;"><input class="f cell-num" id="q6"  type="text" style="top:51.85%;left:66.5%;width:13%;"><input class="f cell-val" id="v6"  type="text" style="top:51.85%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d7"  type="text" style="top:55.01%;left:8.5%;width:57%;"><input class="f cell-num" id="q7"  type="text" style="top:55.01%;left:66.5%;width:13%;"><input class="f cell-val" id="v7"  type="text" style="top:55.01%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d8"  type="text" style="top:58.17%;left:8.5%;width:57%;"><input class="f cell-num" id="q8"  type="text" style="top:58.17%;left:66.5%;width:13%;"><input class="f cell-val" id="v8"  type="text" style="top:58.17%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d9"  type="text" style="top:61.33%;left:8.5%;width:57%;"><input class="f cell-num" id="q9"  type="text" style="top:61.33%;left:66.5%;width:13%;"><input class="f cell-val" id="v9"  type="text" style="top:61.33%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d10" type="text" style="top:64.49%;left:8.5%;width:57%;"><input class="f cell-num" id="q10" type="text" style="top:64.49%;left:66.5%;width:13%;"><input class="f cell-val" id="v10" type="text" style="top:64.49%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d11" type="text" style="top:67.65%;left:8.5%;width:57%;"><input class="f cell-num" id="q11" type="text" style="top:67.65%;left:66.5%;width:13%;"><input class="f cell-val" id="v11" type="text" style="top:67.65%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d12" type="text" style="top:70.81%;left:8.5%;width:57%;"><input class="f cell-num" id="q12" type="text" style="top:70.81%;left:66.5%;width:13%;"><input class="f cell-val" id="v12" type="text" style="top:70.81%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d13" type="text" style="top:73.97%;left:8.5%;width:57%;"><input class="f cell-num" id="q13" type="text" style="top:73.97%;left:66.5%;width:13%;"><input class="f cell-val" id="v13" type="text" style="top:73.97%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d14" type="text" style="top:77.13%;left:8.5%;width:57%;"><input class="f cell-num" id="q14" type="text" style="top:77.13%;left:66.5%;width:13%;"><input class="f cell-val" id="v14" type="text" style="top:77.13%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d15" type="text" style="top:80.29%;left:8.5%;width:57%;"><input class="f cell-num" id="q15" type="text" style="top:80.29%;left:66.5%;width:13%;"><input class="f cell-val" id="v15" type="text" style="top:80.29%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d16" type="text" style="top:83.45%;left:8.5%;width:57%;"><input class="f cell-num" id="q16" type="text" style="top:83.45%;left:66.5%;width:13%;"><input class="f cell-val" id="v16" type="text" style="top:83.45%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d17" type="text" style="top:86.61%;left:8.5%;width:57%;"><input class="f cell-num" id="q17" type="text" style="top:86.61%;left:66.5%;width:13%;"><input class="f cell-val" id="v17" type="text" style="top:86.61%;left:80.5%;width:16.5%;">
-  <input class="f cell" id="d18" type="text" style="top:89.77%;left:8.5%;width:57%;"><input class="f cell-num" id="q18" type="text" style="top:89.77%;left:66.5%;width:13%;"><input class="f cell-val" id="v18" type="text" style="top:89.77%;left:80.5%;width:16.5%;">
+  <!-- CABEÇALHO DIREITO: DATA / CLIENTE / TELEFONE -->
+  <!-- A imagem tem ~768px de altura. DATA fica ~19.5%, CLIENTE ~23.5%, TELEFONE ~27.5% -->
+  <!-- Lado direito começa em ~52% do bloco -->
+  <input class="f" id="data"     type="text" placeholder="dd/mm/aaaa" style="top:19.4%;left:52%;width:42%;">
+  <input class="f" id="cliente"  type="text" placeholder=""           style="top:23.4%;left:52%;width:42%;">
+  <input class="f" id="telefone" type="tel"  placeholder=""           style="top:27.4%;left:52%;width:42%;">
 
-  <!-- TOTAL -->
-  <div id="total-display" style="top:92.93%;left:80.5%;width:16.5%;height:2.8%;">R$ 0,00</div>
+  <!-- LINHA VEÍCULO / ANO / PLACA -->
+  <!-- Veículo: após "VEÍCULO:" que termina ~16%, ANO após "ANO:" ~63%, PLACA após "PLACA:" ~79% -->
+  <input class="f" id="veiculo"  type="text" placeholder="" style="top:31.8%;left:15.5%;width:43%;">
+  <input class="f" id="ano"      type="text" placeholder="" style="top:31.8%;left:63%;width:11%;">
+  <input class="f" id="placa"    type="text" placeholder="" style="top:31.8%;left:80%;width:15%;">
+
+  <!-- TABELA: 18 linhas
+       Área da tabela: left da descrição ~10%, qtd ~67%, valor ~82%
+       Primeira linha ~36.8%, incremento ~3.17% por linha
+       Largura: desc 54%, qtd 12%, val 13%
+  -->
+  <input class="f cell"     id="d1"  type="text" style="top:36.8%;left:10%;width:54%;"><input class="f cell-num" id="q1"  type="text" style="top:36.8%;left:67%;width:12%;"><input class="f cell-val" id="v1"  type="text" style="top:36.8%;left:82%;width:13%;">
+  <input class="f cell"     id="d2"  type="text" style="top:39.97%;left:10%;width:54%;"><input class="f cell-num" id="q2"  type="text" style="top:39.97%;left:67%;width:12%;"><input class="f cell-val" id="v2"  type="text" style="top:39.97%;left:82%;width:13%;">
+  <input class="f cell"     id="d3"  type="text" style="top:43.14%;left:10%;width:54%;"><input class="f cell-num" id="q3"  type="text" style="top:43.14%;left:67%;width:12%;"><input class="f cell-val" id="v3"  type="text" style="top:43.14%;left:82%;width:13%;">
+  <input class="f cell"     id="d4"  type="text" style="top:46.31%;left:10%;width:54%;"><input class="f cell-num" id="q4"  type="text" style="top:46.31%;left:67%;width:12%;"><input class="f cell-val" id="v4"  type="text" style="top:46.31%;left:82%;width:13%;">
+  <input class="f cell"     id="d5"  type="text" style="top:49.48%;left:10%;width:54%;"><input class="f cell-num" id="q5"  type="text" style="top:49.48%;left:67%;width:12%;"><input class="f cell-val" id="v5"  type="text" style="top:49.48%;left:82%;width:13%;">
+  <input class="f cell"     id="d6"  type="text" style="top:52.65%;left:10%;width:54%;"><input class="f cell-num" id="q6"  type="text" style="top:52.65%;left:67%;width:12%;"><input class="f cell-val" id="v6"  type="text" style="top:52.65%;left:82%;width:13%;">
+  <input class="f cell"     id="d7"  type="text" style="top:55.82%;left:10%;width:54%;"><input class="f cell-num" id="q7"  type="text" style="top:55.82%;left:67%;width:12%;"><input class="f cell-val" id="v7"  type="text" style="top:55.82%;left:82%;width:13%;">
+  <input class="f cell"     id="d8"  type="text" style="top:58.99%;left:10%;width:54%;"><input class="f cell-num" id="q8"  type="text" style="top:58.99%;left:67%;width:12%;"><input class="f cell-val" id="v8"  type="text" style="top:58.99%;left:82%;width:13%;">
+  <input class="f cell"     id="d9"  type="text" style="top:62.16%;left:10%;width:54%;"><input class="f cell-num" id="q9"  type="text" style="top:62.16%;left:67%;width:12%;"><input class="f cell-val" id="v9"  type="text" style="top:62.16%;left:82%;width:13%;">
+  <input class="f cell"     id="d10" type="text" style="top:65.33%;left:10%;width:54%;"><input class="f cell-num" id="q10" type="text" style="top:65.33%;left:67%;width:12%;"><input class="f cell-val" id="v10" type="text" style="top:65.33%;left:82%;width:13%;">
+  <input class="f cell"     id="d11" type="text" style="top:68.50%;left:10%;width:54%;"><input class="f cell-num" id="q11" type="text" style="top:68.50%;left:67%;width:12%;"><input class="f cell-val" id="v11" type="text" style="top:68.50%;left:82%;width:13%;">
+  <input class="f cell"     id="d12" type="text" style="top:71.67%;left:10%;width:54%;"><input class="f cell-num" id="q12" type="text" style="top:71.67%;left:67%;width:12%;"><input class="f cell-val" id="v12" type="text" style="top:71.67%;left:82%;width:13%;">
+  <input class="f cell"     id="d13" type="text" style="top:74.84%;left:10%;width:54%;"><input class="f cell-num" id="q13" type="text" style="top:74.84%;left:67%;width:12%;"><input class="f cell-val" id="v13" type="text" style="top:74.84%;left:82%;width:13%;">
+  <input class="f cell"     id="d14" type="text" style="top:78.01%;left:10%;width:54%;"><input class="f cell-num" id="q14" type="text" style="top:78.01%;left:67%;width:12%;"><input class="f cell-val" id="v14" type="text" style="top:78.01%;left:82%;width:13%;">
+  <input class="f cell"     id="d15" type="text" style="top:81.18%;left:10%;width:54%;"><input class="f cell-num" id="q15" type="text" style="top:81.18%;left:67%;width:12%;"><input class="f cell-val" id="v15" type="text" style="top:81.18%;left:82%;width:13%;">
+  <input class="f cell"     id="d16" type="text" style="top:84.35%;left:10%;width:54%;"><input class="f cell-num" id="q16" type="text" style="top:84.35%;left:67%;width:12%;"><input class="f cell-val" id="v16" type="text" style="top:84.35%;left:82%;width:13%;">
+  <input class="f cell"     id="d17" type="text" style="top:87.52%;left:10%;width:54%;"><input class="f cell-num" id="q17" type="text" style="top:87.52%;left:67%;width:12%;"><input class="f cell-val" id="v17" type="text" style="top:87.52%;left:82%;width:13%;">
+  <input class="f cell"     id="d18" type="text" style="top:90.69%;left:10%;width:54%;"><input class="f cell-num" id="q18" type="text" style="top:90.69%;left:67%;width:12%;"><input class="f cell-val" id="v18" type="text" style="top:90.69%;left:82%;width:13%;">
+
+  <!-- TOTAL na faixa laranja "TOTAL" -->
+  <div id="total-display" style="top:93.6%;left:66%;width:29%;height:2.6%;">R$ 0,00</div>
 
 </div>
 </div>
@@ -261,7 +270,7 @@ function gerarCanvas() {
     var scale = 2;
     var x = (totalRect.right - wrapRect.left) * scale - 4;
     var y = (totalRect.top - wrapRect.top + totalRect.height * 0.72) * scale;
-    ctx.font = 'bold ' + Math.round(12 * scale) + 'px Arial';
+    ctx.font = 'bold ' + Math.round(11 * scale) + 'px Arial';
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'right';
     ctx.fillText(totalTxt, x, y);
