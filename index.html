@@ -323,7 +323,6 @@
     left: 50%; transform: translateX(-50%);
   }
 
-  /* Override for full width */
   @media (max-width: 600px) {
     .action-bar { left: 0; transform: none; }
   }
@@ -421,9 +420,9 @@
 
         <div class="field-group">
           <span class="field-label">Nº</span>
-          <input class="field-input" id="num" style="width:70px" placeholder="0001" maxlength="6">
+          <input class="field-input" id="num" style="width:120px" placeholder="PLACA-DDMM" maxlength="14">
           <span class="field-label" style="margin-left:12px">Data</span>
-          <input class="field-input" id="data" type="date" style="width:130px">
+          <input class="field-input" id="data" type="date" style="width:130px" oninput="gerarNumero()">
         </div>
 
         <div class="field-group">
@@ -450,7 +449,7 @@
       </div>
       <div class="field-group" style="flex:1.2">
         <span class="field-label">Placa</span>
-        <input class="field-input" id="placa" placeholder="AAA-0000" style="text-transform:uppercase" maxlength="8">
+        <input class="field-input" id="placa" placeholder="AAA-0000" style="text-transform:uppercase" maxlength="8" oninput="gerarNumero()">
       </div>
     </div>
 
@@ -532,29 +531,50 @@
 let rowCount = 0;
 let rows = [];
 
+// ── GERAR NÚMERO AUTOMÁTICO (PLACA-DDMM) ──
+function gerarNumero() {
+  const placa = document.getElementById('placa').value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+  const dataVal = document.getElementById('data').value; // YYYY-MM-DD
+  if (!placa && !dataVal) return;
+
+  let ddmm = '';
+  if (dataVal) {
+    const parts = dataVal.split('-'); // [YYYY, MM, DD]
+    if (parts.length === 3) {
+      ddmm = parts[2] + parts[1]; // DDMM
+    }
+  }
+
+  let num = '';
+  if (placa && ddmm) {
+    num = placa + '-' + ddmm;
+  } else if (placa) {
+    num = placa;
+  } else if (ddmm) {
+    num = ddmm;
+  }
+
+  document.getElementById('num').value = num;
+}
+
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', () => {
-  // Set today's date
   document.getElementById('data').valueAsDate = new Date();
 
-  // Auto number
-  const lastNum = parseInt(localStorage.getItem('fonsecar_lastNum') || '0') + 1;
-  document.getElementById('num').value = String(lastNum).padStart(4, '0');
-
-  // Load saved draft
   const draft = localStorage.getItem('fonsecar_draft');
   if (draft) {
     try {
       const d = JSON.parse(draft);
       loadDraft(d);
     } catch(e) {
+      gerarNumero();
       for (let i = 0; i < 10; i++) addRow();
     }
   } else {
+    gerarNumero();
     for (let i = 0; i < 10; i++) addRow();
   }
 
-  // Register SW
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
@@ -662,13 +682,11 @@ function loadDraft(d) {
 function newOrcamento() {
   if (!confirm('Criar novo orçamento? O rascunho atual será perdido.')) return;
   localStorage.removeItem('fonsecar_draft');
-  const lastNum = parseInt(localStorage.getItem('fonsecar_lastNum') || '0') + 1;
-  localStorage.setItem('fonsecar_lastNum', lastNum);
   document.getElementById('itemsBody').innerHTML = '';
   rows = []; rowCount = 0;
-  ['cliente','telefone','veiculo','ano','placa','obs'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('num').value = String(lastNum).padStart(4, '0');
+  ['cliente','telefone','veiculo','ano','placa','obs','num'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('data').valueAsDate = new Date();
+  gerarNumero();
   for (let i = 0; i < 10; i++) addRow();
   calcTotal();
   showToast('Novo orçamento criado');
@@ -702,7 +720,6 @@ function gerarPDF() {
   try {
     doc.addImage(logoImg, 'PNG', 2, 2, 56, 48);
   } catch(e) {
-    // fallback text if image fails
     doc.setFillColor(200, 75, 0);
     doc.rect(2, 4, 56, 14, 'F');
     doc.setTextColor(255, 255, 255);
@@ -782,7 +799,6 @@ function gerarPDF() {
   const colX = [margin, margin + 12, margin + 12 + 112, margin + 12 + 112 + 30];
   const colW = [12, 112, 30, 34];
 
-  // Header
   doc.setFillColor(200, 75, 0);
   doc.rect(margin, tableTop, contentW, 8, 'F');
   doc.setTextColor(255, 255, 255);
@@ -793,7 +809,6 @@ function gerarPDF() {
   doc.text('QTD', colX[2] + 15, tableTop + 5.2, { align: 'center' });
   doc.text('VALOR (R$)', colX[3] + 17, tableTop + 5.2, { align: 'center' });
 
-  // Items
   const rowH = 8;
   let y = tableTop + 8;
   const visibleItems = (d.items || []).filter((it, i) => it.desc || it.val || i < 15);
@@ -803,29 +818,23 @@ function gerarPDF() {
     const bg = i % 2 === 0 ? [250, 246, 240] : [240, 232, 218];
     doc.setFillColor(...bg);
     doc.rect(margin, y, contentW, rowH, 'F');
-
-    // grid lines
     doc.setDrawColor(200, 144, 96);
     doc.setLineWidth(0.3);
     doc.line(margin, y + rowH, margin + contentW, y + rowH);
     doc.line(colX[1], y, colX[1], y + rowH);
     doc.line(colX[2], y, colX[2], y + rowH);
     doc.line(colX[3], y, colX[3], y + rowH);
-
     doc.setTextColor(158, 58, 0);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8);
     doc.text(String(i + 1).padStart(2, '0'), colX[0] + 6, y + 5.2, { align: 'center' });
-
     doc.setTextColor(26, 10, 0);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     if (item.desc) doc.text(String(item.desc), colX[1] + 2, y + 5.2);
-
     if (item.qty && item.qty !== '1' && item.qty !== '') {
       doc.text(String(item.qty), colX[2] + 15, y + 5.2, { align: 'center' });
     }
-
     if (item.val) {
       const qty = parseFloat((item.qty || '1').replace(',', '.')) || 1;
       const val = parseFloat((item.val || '0').replace(',', '.')) || 0;
@@ -833,11 +842,9 @@ function gerarPDF() {
       const valStr = subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
       doc.text(valStr, colX[3] + colW[3] - 3, y + 5.2, { align: 'right' });
     }
-
     y += rowH;
   });
 
-  // OBS
   if (d.obs) {
     y += 2;
     doc.setFillColor(255, 255, 255);
@@ -857,7 +864,6 @@ function gerarPDF() {
     y += 18;
   }
 
-  // ── TOTAL ──
   y += 2;
   doc.setFillColor(200, 75, 0);
   doc.rect(margin, y, contentW, 11, 'F');
@@ -876,17 +882,14 @@ function gerarPDF() {
   doc.setFontSize(14);
   doc.text(totalStr, margin + contentW - 4, y + 7.5, { align: 'right' });
 
-  // ── FOOTER ──
   const footerY = H - 32;
   doc.setFillColor(26, 10, 0);
   doc.rect(0, footerY, W, 32, 'F');
-
   doc.setTextColor(245, 240, 232);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8.5);
   doc.text('📍  Rua Maranhão, 13, Bairro Industrial — Contagem, MG', margin, footerY + 8);
   doc.text('      CEP: 32.230-440   |   CNPJ: 48.549.990/0001-48', margin, footerY + 15);
-
   doc.setFillColor(200, 75, 0);
   doc.rect(0, footerY + 20, W, 12, 'F');
   doc.setTextColor(255, 255, 255);
@@ -894,18 +897,14 @@ function gerarPDF() {
   doc.setFontSize(13);
   doc.text('📞  31 99273-0811', margin, footerY + 28);
 
-  // ── BORDER ──
   doc.setDrawColor(200, 75, 0);
   doc.setLineWidth(1.5);
   doc.rect(3, 3, W - 6, H - 6);
 
-  // ── SAVE ──
-  const num = d.num || '0001';
-  const cliente = (d.cliente || 'orcamento').replace(/\s+/g, '_').toLowerCase();
-  doc.save(`fonsecar_orcamento_${num}_${cliente}.pdf`);
+  const numSafe = (d.num || 'orcamento').replace(/[^a-zA-Z0-9]/g, '_');
+  const cliente = (d.cliente || 'cliente').replace(/\s+/g, '_').toLowerCase();
+  doc.save(`fonsecar_${numSafe}_${cliente}.pdf`);
 
-  // Save num to localStorage
-  localStorage.setItem('fonsecar_lastNum', parseInt(d.num || '1'));
   showToast('✓ PDF gerado com sucesso!');
 }
 
