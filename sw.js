@@ -1,7 +1,9 @@
 const CACHE_NAME = 'fonsecar-v1';
 const ASSETS = [
+  './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './logo.png'
 ];
 
 self.addEventListener('install', e => {
