@@ -641,323 +641,358 @@ function newOrcamento() {
 }
 
 // ══════════════════════════════════════════
+// ── LOGO COMO BASE64 (carregamento assíncrono) ──
+// ══════════════════════════════════════════
+async function carregarLogoBase64() {
+  try {
+    const resp = await fetch('logo.png');
+    const blob = await resp.blob();
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (e) {
+    return null;
+  }
+}
+
+// ══════════════════════════════════════════
 // ── PDF PREMIUM ──
 // ══════════════════════════════════════════
-function gerarPDF() {
+async function gerarPDF() {
+  showToast('⏳ Gerando PDF...');
+
   const d = gatherData();
+  const logoBase64 = await carregarLogoBase64();
+
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
   const W = 210, H = 297;
-  const M = 14; // margem
-  const CW = W - M * 2; // largura do conteúdo
+  const M = 12; // margem lateral
+  const CW = W - M * 2;
 
   // ── Paleta ──
-  const OR  = [200, 75, 0];    // laranja principal
-  const ORD = [158, 58, 0];    // laranja escuro
-  const DK  = [26, 10, 0];     // preto quente
-  const CR  = [245, 240, 232]; // creme claro
-  const CRD = [237, 228, 212]; // creme escuro
-  const WH  = [255, 255, 255]; // branco
-  const ORP = [255, 220, 180]; // laranja pálido
-  const BD  = [200, 144, 96];  // borda
-  const RO  = [250, 246, 240]; // linha ímpar
-  const RE  = [240, 232, 218]; // linha par
+  const OR  = [200, 75, 0];
+  const ORD = [158, 58, 0];
+  const DK  = [26, 10, 0];
+  const CR  = [245, 240, 232];
+  const CRD = [237, 228, 212];
+  const WH  = [255, 255, 255];
+  const ORP = [255, 215, 170];
+  const BD  = [200, 144, 96];
+  const RO  = [250, 246, 240];
+  const RE  = [240, 232, 218];
 
-  // ── Helpers ──
-  const fill  = (r,g,b) => doc.setFillColor(r,g,b);
-  const draw  = (r,g,b) => doc.setDrawColor(r,g,b);
-  const text  = (r,g,b) => doc.setTextColor(r,g,b);
-  const lw    = (n)     => doc.setLineWidth(n);
-  const fnt   = (s,w)   => doc.setFont('helvetica', w || 'normal');
-  const fsz   = (n)     => doc.setFontSize(n);
-  const box   = (x,y,w,h,s) => doc.rect(x,y,w,h, s||'F');
-  const ln    = (x1,y1,x2,y2) => doc.line(x1,y1,x2,y2);
+  const fill = (r,g,b) => doc.setFillColor(r,g,b);
+  const draw = (r,g,b) => doc.setDrawColor(r,g,b);
+  const text = (r,g,b) => doc.setTextColor(r,g,b);
+  const lw   = (n)     => doc.setLineWidth(n);
+  const fnt  = (w)     => doc.setFont('helvetica', w || 'normal');
+  const fsz  = (n)     => doc.setFontSize(n);
+  const box  = (x,y,w,h,s) => doc.rect(x,y,w,h,s||'F');
+  const ln   = (x1,y1,x2,y2) => doc.line(x1,y1,x2,y2);
 
-  // ── Ícone PIN (localização) ──
-  function iconPin(x, y, color) {
-    fill(...color); draw(...color); lw(0.1);
-    doc.circle(x, y, 1.4, 'F');
-    doc.triangle(x - 1.2, y + 0.3, x + 1.2, y + 0.3, x, y + 3.5, 'F');
+  // ─── ÍCONES SVG-like desenhados com primitivas ───
+
+  // Pin de localização
+  function iconPin(x, y, col) {
+    fill(...col); draw(...col); lw(0.1);
+    doc.circle(x, y - 1, 1.6, 'F');
+    // triângulo abaixo do círculo
+    fill(...col);
+    doc.triangle(x - 1.4, y - 0.2, x + 1.4, y - 0.2, x, y + 3.2, 'F');
     fill(...WH);
-    doc.circle(x, y, 0.55, 'F');
+    doc.circle(x, y - 1, 0.65, 'F');
   }
 
-  // ── Ícone TELEFONE ──
-  function iconPhone(x, y, color) {
-    fill(...color); draw(...color); lw(0.1);
-    // Corpo do telefone
-    doc.roundedRect(x - 1.3, y - 3.2, 2.6, 6.4, 0.5, 0.5, 'F');
-    fill(...(color === WH ? DK : WH));
-    doc.roundedRect(x - 0.95, y - 2.5, 1.9, 4.3, 0.3, 0.3, 'F');
-    fill(...color);
-    doc.circle(x, y + 2.1, 0.4, 'F');
+  // Telefone (receiver)
+  function iconPhone(x, y, col) {
+    fill(...col); lw(0.1);
+    // base arredondada
+    doc.roundedRect(x - 1.6, y - 3.5, 3.2, 7, 1.2, 1.2, 'F');
+    // tela interna
+    const inner = col === WH ? DK : WH;
+    fill(...inner);
+    doc.roundedRect(x - 1.1, y - 2.7, 2.2, 4.5, 0.4, 0.4, 'F');
+    // home button
+    fill(...col);
+    doc.circle(x, y + 2.2, 0.5, 'F');
   }
 
-  // ── Ícone CALENDÁRIO ──
-  function iconCalendar(x, y, color) {
-    fill(...color); draw(...color); lw(0.1);
-    doc.roundedRect(x - 2, y - 1.5, 4, 3.8, 0.3, 0.3, 'F');
-    fill(...(color === WH ? DK : WH));
-    box(x - 1.7, y - 0.3, 3.4, 2.8, 'F');
-    fill(...color);
-    ln(x - 0.8, y - 1.5, x - 0.8, y - 2.8); ln(x + 0.8, y - 1.5, x + 0.8, y - 2.8);
-    lw(0.3); draw(...color);
-    ln(x - 1.7, y + 0.2, x + 1.7, y + 0.2);
+  // Engrenagem decorativa
+  function gearDeco(x, y, r, col, alpha) {
+    doc.saveGraphicsState && doc.saveGraphicsState();
+    fill(...col);
+    doc.circle(x, y, r * 0.6, 'F');
+    fill(...WH);
+    doc.circle(x, y, r * 0.28, 'F');
+    doc.restoreGraphicsState && doc.restoreGraphicsState();
   }
 
-  // ── Ícone PESSOA ──
-  function iconPerson(x, y, color) {
-    fill(...color);
-    doc.circle(x, y - 2, 1.2, 'F');
-    fill(...color);
-    doc.ellipse(x, y + 1.2, 1.8, 1.4, 'F');
-  }
-
-  // ── Ícone CARRO ──
-  function iconCar(x, y, color) {
-    fill(...color); draw(...color); lw(0.1);
-    // Corpo
-    doc.roundedRect(x - 3.5, y - 1.2, 7, 2.8, 0.4, 0.4, 'F');
-    // Cabine
-    fill(...color);
-    doc.roundedRect(x - 2.2, y - 3.0, 4.4, 2.1, 0.4, 0.4, 'F');
-    // Janelas
-    fill(...(color === WH ? DK : WH)); lw(0.1);
-    doc.roundedRect(x - 1.9, y - 2.8, 1.6, 1.4, 0.2, 0.2, 'F');
-    doc.roundedRect(x + 0.3, y - 2.8, 1.6, 1.4, 0.2, 0.2, 'F');
-    // Rodas
+  // Ícone carro
+  function iconCar(x, y, col) {
+    fill(...col); lw(0.1);
+    doc.roundedRect(x - 4, y - 1.5, 8, 3.2, 0.5, 0.5, 'F');
+    doc.roundedRect(x - 2.6, y - 3.5, 5.2, 2.3, 0.5, 0.5, 'F');
+    fill(...WH);
+    doc.roundedRect(x - 2.3, y - 3.2, 2, 1.6, 0.2, 0.2, 'F');
+    doc.roundedRect(x + 0.3, y - 3.2, 2, 1.6, 0.2, 0.2, 'F');
     fill(...DK);
-    doc.circle(x - 2.1, y + 1.7, 1.05, 'F');
-    doc.circle(x + 2.1, y + 1.7, 1.05, 'F');
-    fill(...[180,180,180]);
-    doc.circle(x - 2.1, y + 1.7, 0.45, 'F');
-    doc.circle(x + 2.1, y + 1.7, 0.45, 'F');
+    doc.circle(x - 2.3, y + 2, 1.2, 'F');
+    doc.circle(x + 2.3, y + 2, 1.2, 'F');
+    fill(...[160,160,160]);
+    doc.circle(x - 2.3, y + 2, 0.5, 'F');
+    doc.circle(x + 2.3, y + 2, 0.5, 'F');
   }
 
-  // ── Ícone PLACA ──
-  function iconPlate(x, y, color) {
-    fill(...color); draw(...color); lw(0.2);
-    doc.roundedRect(x - 2.4, y - 1.2, 4.8, 2.4, 0.3, 0.3, 'F');
+  // Ícone placa
+  function iconPlate(x, y, col) {
+    fill(...col); lw(0.2);
+    doc.roundedRect(x - 2.8, y - 1.4, 5.6, 2.8, 0.4, 0.4, 'F');
     fill(...WH);
-    doc.roundedRect(x - 2.1, y - 0.9, 4.2, 1.8, 0.2, 0.2, 'F');
+    doc.roundedRect(x - 2.4, y - 1.0, 4.8, 2.0, 0.2, 0.2, 'F');
   }
 
-  // ── FUNDO da página ──
+  // Ícone pessoa
+  function iconPerson(x, y, col) {
+    fill(...col);
+    doc.circle(x, y - 2.2, 1.4, 'F');
+    doc.ellipse(x, y + 1, 2, 1.6, 'F');
+  }
+
+  // Ícone calendário
+  function iconCalendar(x, y, col) {
+    fill(...col); lw(0.1);
+    doc.roundedRect(x - 2.2, y - 1.8, 4.4, 4.2, 0.4, 0.4, 'F');
+    fill(...WH);
+    box(x - 1.9, y - 0.2, 3.8, 2.8, 'F');
+    fill(...col);
+    // hastes do calendário
+    lw(0.8); draw(...col);
+    ln(x - 1, y - 1.8, x - 1, y - 3.2);
+    ln(x + 1, y - 1.8, x + 1, y - 3.2);
+    // linha separadora
+    lw(0.35);
+    ln(x - 1.9, y + 0.2, x + 1.9, y + 0.2);
+  }
+
+  // ═══════════════════════════════════════
+  // LAYOUT — idêntico ao HTML
+  // ═══════════════════════════════════════
+
+  // Fundo geral creme
   fill(...CR); box(0, 0, W, H);
 
-  // ── BORDA externa ──
-  fill(...CR); draw(...OR); lw(0.8);
-  doc.rect(4, 4, W - 8, H - 8);
+  // ── CABEÇALHO ──
+  // Coluna escura da logo (esquerda) — 60mm de largura
+  const LOGO_COL_W = 60;
+  const HDR_H = 62;
+  fill(...DK); box(0, 0, LOGO_COL_W, HDR_H);
 
-  // ── FAIXA DECORATIVA topo (laranja escuro) ──
-  fill(...ORD); box(0, 0, W, 6);
-  // Faixa laranja principal
-  fill(...OR); box(0, 6, W, 54);
+  // Área laranja à direita
+  fill(...OR); box(LOGO_COL_W, 0, W - LOGO_COL_W, HDR_H);
 
-  // ── COLUNA ESQUERDA DO CABEÇALHO (dark) ──
-  fill(...DK); box(0, 0, 62, 60);
+  // Borda laranja escura no topo
+  fill(...ORD); box(0, 0, W, 3);
 
-  // ── LOGO ──
-  const logoImg = new Image();
-  logoImg.src = 'logo.png';
-  try {
-    doc.addImage(logoImg, 'PNG', 2, 4, 58, 52);
-  } catch(e) {
-    // Fallback texto
-    text(...OR); fnt(null,'bold'); fsz(15);
-    doc.text('FONSECAR', 31, 22, { align: 'center' });
-    text(...ORP); fnt(null,'normal'); fsz(7);
-    doc.text('AUTO MECANICA', 31, 29, { align: 'center' });
+  // ── LOGO no header ──
+  if (logoBase64) {
+    try {
+      doc.addImage(logoBase64, 'PNG', 2, 3, LOGO_COL_W - 4, HDR_H - 6);
+    } catch(e) {
+      text(...OR); fnt('bold'); fsz(13);
+      doc.text('FONSECAR', LOGO_COL_W / 2, 25, { align: 'center' });
+      text(...ORP); fnt('normal'); fsz(7);
+      doc.text('AUTO MECANICA', LOGO_COL_W / 2, 32, { align: 'center' });
+    }
+  } else {
+    text(...OR); fnt('bold'); fsz(13);
+    doc.text('FONSECAR', LOGO_COL_W / 2, 25, { align: 'center' });
+    text(...ORP); fnt('normal'); fsz(7);
+    doc.text('AUTO MECANICA', LOGO_COL_W / 2, 32, { align: 'center' });
   }
 
-  // ── TÍTULO ORÇAMENTO ──
-  text(...WH); fnt(null,'bold'); fsz(28);
-  doc.text('ORCAMENTO', 136, 26, { align: 'center' });
+  // ── TÍTULO "ORÇAMENTO" ──
+  const titleX = LOGO_COL_W + (W - LOGO_COL_W) / 2;
+  text(...WH); fnt('bold'); fsz(32);
+  doc.text('ORCAMENTO', titleX, 24, { align: 'center' });
 
-  // Número com destaque
-  // Badge pill
-  fill(...ORD); doc.roundedRect(100, 29, 72, 8, 4, 4, 'F');
-  text(...ORP); fnt(null,'bold'); fsz(8.5);
-  doc.text('No ' + (d.num || '----'), 136, 34.5, { align: 'center' });
+  // Badge do número
+  fill(...ORD); doc.roundedRect(LOGO_COL_W + 8, 27, W - LOGO_COL_W - 16, 8, 4, 4, 'F');
+  text(...ORP); fnt('bold'); fsz(8);
+  doc.text('No ' + (d.num || '----'), titleX, 32.5, { align: 'center' });
 
-  // ── CAMPOS: DATA e CLIENTE (na faixa laranja) ──
-  const cy = 45;
-  // Data
-  iconCalendar(67, cy - 1, WH);
-  text(...ORP); fnt(null,'bold'); fsz(6.5);
-  doc.text('DATA', 72, cy - 3.5);
-  text(...WH); fnt(null,'normal'); fsz(9);
+  // ── Campos: DATA / CLIENTE / TELEFONE na faixa laranja ──
+  const cy = 48;
+
+  // DATA
+  iconCalendar(LOGO_COL_W + 8, cy - 1, WH);
+  text(...ORP); fnt('bold'); fsz(6);
+  doc.text('DATA', LOGO_COL_W + 14, cy - 4);
+  text(...WH); fnt('normal'); fsz(9);
   const dataStr = d.data ? new Date(d.data + 'T12:00:00').toLocaleDateString('pt-BR') : '---';
-  doc.text(dataStr, 72, cy + 1.5);
+  doc.text(dataStr, LOGO_COL_W + 14, cy + 2);
 
-  // Divisor vertical
-  draw(...[255,140,60]); lw(0.4);
-  ln(112, cy - 6, 112, cy + 4);
+  // Divisor
+  draw(...[255,150,80]); lw(0.4);
+  ln(LOGO_COL_W + 50, cy - 8, LOGO_COL_W + 50, cy + 5);
 
-  // Cliente
-  iconPerson(116, cy - 1, WH);
-  text(...ORP); fnt(null,'bold'); fsz(6.5);
-  doc.text('CLIENTE', 121, cy - 3.5);
-  text(...WH); fnt(null,'normal'); fsz(9);
-  doc.text(doc.splitTextToSize(d.cliente || '---', 55)[0], 121, cy + 1.5);
+  // CLIENTE
+  iconPerson(LOGO_COL_W + 56, cy - 1, WH);
+  text(...ORP); fnt('bold'); fsz(6);
+  doc.text('CLIENTE', LOGO_COL_W + 62, cy - 4);
+  text(...WH); fnt('normal'); fsz(9);
+  doc.text(doc.splitTextToSize(d.cliente || '---', 58)[0], LOGO_COL_W + 62, cy + 2);
 
-  // Divisor vertical
-  draw(...[255,140,60]); lw(0.4);
-  ln(178, cy - 6, 178, cy + 4);
+  // Divisor
+  draw(...[255,150,80]); lw(0.4);
+  ln(LOGO_COL_W + 122, cy - 8, LOGO_COL_W + 122, cy + 5);
 
-  // Telefone
-  iconPhone(181, cy - 1, WH);
-  text(...ORP); fnt(null,'bold'); fsz(6.5);
-  doc.text('FONE', 185, cy - 3.5);
-  text(...WH); fnt(null,'normal'); fsz(8.5);
-  doc.text(d.telefone || '---', 185, cy + 1.5);
+  // TELEFONE
+  iconPhone(LOGO_COL_W + 128, cy - 1, WH);
+  text(...ORP); fnt('bold'); fsz(6);
+  doc.text('FONE', LOGO_COL_W + 134, cy - 4);
+  text(...WH); fnt('normal'); fsz(9);
+  doc.text(d.telefone || '---', LOGO_COL_W + 134, cy + 2);
 
-  // ── SEPARADOR LARANJA / CREME ──
-  fill(...OR); box(0, 60, W, 3);
+  // ── Linha divisória laranja / branco ──
+  fill(...OR); box(0, HDR_H, W, 3);
 
-  // ── FAIXA DO VEÍCULO ──
-  fill(...WH); box(0, 63, W, 14);
+  // ── FAIXA VEÍCULO ──
+  const VH = 15;
+  fill(...WH); box(0, HDR_H + 3, W, VH);
   draw(...BD); lw(0.3);
-  ln(0, 77, W, 77);
+  ln(0, HDR_H + 3 + VH, W, HDR_H + 3 + VH);
 
-  const vy = 72;
-  // Ícone carro
-  iconCar(M + 5, vy + 1, OR);
-  text(...ORD); fnt(null,'bold'); fsz(6.5);
-  doc.text('VEICULO', M + 13, vy - 2);
-  text(...DK); fnt(null,'normal'); fsz(9.5);
+  const vy = HDR_H + 3 + VH / 2 + 2;
+  iconCar(M + 5, vy, OR);
+  text(...ORD); fnt('bold'); fsz(6.5);
+  doc.text('VEICULO', M + 13, vy - 3.5);
+  text(...DK); fnt('normal'); fsz(10);
   doc.text(d.veiculo || '---', M + 13, vy + 3);
 
-  draw(...BD); lw(0.3); ln(110, 64, 110, 77);
+  draw(...BD); lw(0.3);
+  ln(112, HDR_H + 3, 112, HDR_H + 3 + VH);
+  text(...ORD); fnt('bold'); fsz(6.5);
+  doc.text('ANO', 116, vy - 3.5);
+  text(...DK); fnt('normal'); fsz(10);
+  doc.text(d.ano || '---', 116, vy + 3);
 
-  // Ano
-  text(...ORD); fnt(null,'bold'); fsz(6.5);
-  doc.text('ANO', 114, vy - 2);
-  text(...DK); fnt(null,'normal'); fsz(9.5);
-  doc.text(d.ano || '---', 114, vy + 3);
-
-  draw(...BD); lw(0.3); ln(140, 64, 140, 77);
-
-  // Placa com ícone
-  iconPlate(145, vy, OR);
-  text(...ORD); fnt(null,'bold'); fsz(6.5);
-  doc.text('PLACA', 152, vy - 2);
-  text(...DK); fnt(null,'bold'); fsz(10);
-  doc.text((d.placa || '---').toUpperCase(), 152, vy + 3);
+  draw(...BD); lw(0.3);
+  ln(148, HDR_H + 3, 148, HDR_H + 3 + VH);
+  iconPlate(153, vy, OR);
+  text(...ORD); fnt('bold'); fsz(6.5);
+  doc.text('PLACA', 160, vy - 3.5);
+  text(...DK); fnt('bold'); fsz(10);
+  doc.text((d.placa || '---').toUpperCase(), 160, vy + 3);
 
   // ── TABELA DE ITENS ──
-  const TT = 79; // table top
-  const colX = [M, M + 13, M + 13 + 112, M + 13 + 112 + 28];
-  const colW = [13, 112, 28, CW - 13 - 112 - 28];
-  const RH = 7.5; // row height
+  const TT = HDR_H + 3 + VH + 1;
+  const colX = [M, M + 13, M + 13 + 113, M + 13 + 113 + 28];
+  const colW = [13, 113, 28, CW - 13 - 113 - 28];
+  const RH = 7.2;
 
-  // Cabeçalho da tabela
-  fill(...DK); box(M, TT, CW, 8);
-  // Linha laranja fina embaixo do header
-  fill(...OR); box(M, TT + 8, CW, 0.8);
+  // Header da tabela — fundo escuro
+  fill(...DK); box(M, TT, CW, 8.5);
+  fill(...OR); box(M, TT + 8.5, CW, 0.8);
 
-  text(...ORP); fnt(null,'bold'); fsz(7);
-  doc.text('#',          colX[0] + 6.5, TT + 5.3, { align: 'center' });
+  // Separadores colunas header
+  draw(...OR); lw(0.35);
+  ln(colX[1], TT, colX[1], TT + 8.5);
+  ln(colX[2], TT, colX[2], TT + 8.5);
+  ln(colX[3], TT, colX[3], TT + 8.5);
+
+  text(...ORP); fnt('bold'); fsz(7);
+  doc.text('#', colX[0] + 6.5, TT + 5.8, { align: 'center' });
   text(...WH); fsz(7);
-  doc.text('DESCRICAO DO SERVICO / PECA', colX[1] + 56, TT + 5.3, { align: 'center' });
-  doc.text('QTD',        colX[2] + 14,  TT + 5.3, { align: 'center' });
-  doc.text('VALOR (R$)', colX[3] + colW[3] / 2, TT + 5.3, { align: 'center' });
+  doc.text('DESCRICAO DO SERVICO / PECA', colX[1] + colW[1] / 2, TT + 5.8, { align: 'center' });
+  doc.text('QTD', colX[2] + colW[2] / 2, TT + 5.8, { align: 'center' });
+  doc.text('VALOR (R$)', colX[3] + colW[3] / 2, TT + 5.8, { align: 'center' });
 
-  // Separadores verticais no header
-  draw(...OR); lw(0.4);
-  ln(colX[1], TT, colX[1], TT + 8);
-  ln(colX[2], TT, colX[2], TT + 8);
-  ln(colX[3], TT, colX[3], TT + 8);
-
-  let y = TT + 8.8;
-  const visibleItems = (d.items || []).filter((it, i) => it.desc || it.val || i < 14);
-  const displayItems = visibleItems.length > 0 ? visibleItems : Array(14).fill({});
+  let y = TT + 9.3;
+  const allItems = d.items || [];
+  const hasContent = allItems.some(it => it.desc || it.val);
+  const displayItems = hasContent
+    ? allItems.filter((it, i) => it.desc || it.val || i < 12)
+    : Array(14).fill({});
 
   displayItems.forEach((item, i) => {
     const bg = i % 2 === 0 ? RO : RE;
     fill(...bg); box(M, y, CW, RH);
 
-    // Separador inferior da linha
     draw(...BD); lw(0.2);
     ln(M, y + RH, M + CW, y + RH);
-    // Separadores colunas
     draw(...BD); lw(0.15);
     ln(colX[1], y, colX[1], y + RH);
     ln(colX[2], y, colX[2], y + RH);
     ln(colX[3], y, colX[3], y + RH);
 
-    // Número
-    // Badge do número
+    // Badge número
     fill(...(i % 2 === 0 ? CRD : [225, 215, 198]));
-    doc.roundedRect(colX[0] + 1.5, y + 1.5, 10, 4.5, 1, 1, 'F');
-    text(...ORD); fnt(null,'bold'); fsz(7.5);
+    doc.roundedRect(colX[0] + 1.5, y + 1.4, 10, 4.5, 1, 1, 'F');
+    text(...ORD); fnt('bold'); fsz(7.5);
     doc.text(String(i + 1).padStart(2, '0'), colX[0] + 6.5, y + 5, { align: 'center' });
 
-    text(...DK); fnt(null,'normal'); fsz(8.5);
     if (item.desc) {
-      const descLines = doc.splitTextToSize(String(item.desc), colW[1] - 4);
-      doc.text(descLines[0], colX[1] + 2, y + 5);
+      text(...DK); fnt('normal'); fsz(8.5);
+      const dl = doc.splitTextToSize(String(item.desc), colW[1] - 4);
+      doc.text(dl[0], colX[1] + 2, y + 5);
     }
     if (item.qty && item.qty !== '1' && item.qty !== '') {
-      text(...ORD); fnt(null,'bold'); fsz(8.5);
-      doc.text(String(item.qty), colX[2] + 14, y + 5, { align: 'center' });
+      text(...ORD); fnt('bold'); fsz(8.5);
+      doc.text(String(item.qty), colX[2] + colW[2] / 2, y + 5, { align: 'center' });
     }
     if (item.val) {
-      const qty = parseFloat((item.qty || '1').replace(',', '.')) || 1;
-      const val = parseFloat((item.val || '0').replace(',', '.')) || 0;
-      const subtotal = qty * val;
-      const valStr = subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-      text(...DK); fnt(null,'bold'); fsz(8.5);
-      doc.text(valStr, colX[3] + colW[3] - 3, y + 5, { align: 'right' });
+      const q = parseFloat((item.qty || '1').replace(',', '.')) || 1;
+      const v = parseFloat((item.val || '0').replace(',', '.')) || 0;
+      text(...DK); fnt('bold'); fsz(8.5);
+      doc.text((q * v).toLocaleString('pt-BR', { minimumFractionDigits: 2 }), colX[3] + colW[3] - 3, y + 5, { align: 'right' });
     }
     y += RH;
   });
 
-  // Borda da tabela
-  draw(...ORD); lw(0.4);
+  // Borda tabela
+  draw(...ORD); lw(0.5);
   doc.rect(M, TT, CW, y - TT);
 
   // ── OBS ──
-  if (d.obs) {
+  if (d.obs && d.obs.trim()) {
     y += 3;
-    fill(...WH); box(M, y, CW, 18);
+    fill(...WH); box(M, y, CW, 20);
     draw(...BD); lw(0.3);
-    // Borda pontilhada simulada com rect
     doc.setLineDash([1.5, 1.5]);
-    doc.rect(M, y, CW, 18);
+    doc.rect(M, y, CW, 20);
     doc.setLineDash([]);
-    // Label
-    fill(...OR); box(M, y, 28, 5.5);
-    text(...WH); fnt(null,'bold'); fsz(6.5);
-    doc.text('OBSERVACOES', M + 14, y + 3.8, { align: 'center' });
-    text(...DK); fnt(null,'normal'); fsz(8);
-    const obsLines = doc.splitTextToSize(d.obs, CW - 6);
-    obsLines.slice(0, 2).forEach((l, li) => doc.text(l, M + 2, y + 9 + li * 5));
-    y += 21;
+    fill(...OR); box(M, y, 30, 5.5);
+    text(...WH); fnt('bold'); fsz(6.5);
+    doc.text('OBSERVACOES', M + 15, y + 3.9, { align: 'center' });
+    text(...DK); fnt('normal'); fsz(8);
+    const obsL = doc.splitTextToSize(d.obs, CW - 6);
+    obsL.slice(0, 3).forEach((l, li) => doc.text(l, M + 2, y + 9 + li * 4.5));
+    y += 23;
   }
 
   // ── TOTAL ──
   y += 3;
-  // Fundo escuro
   fill(...DK); box(M, y, CW, 13);
-  // Faixa laranja na esquerda
   fill(...OR); box(M, y, 4, 13);
 
   let total = 0;
-  (d.items || []).forEach(item => {
-    const qty = parseFloat((item.qty || '1').replace(',', '.')) || 1;
-    const val = parseFloat((item.val || '0').replace(',', '.')) || 0;
-    total += qty * val;
+  allItems.forEach(item => {
+    const q = parseFloat((item.qty || '1').replace(',', '.')) || 1;
+    const v = parseFloat((item.val || '0').replace(',', '.')) || 0;
+    total += q * v;
   });
-  const totalStr = 'R$ ' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
 
-  text(...ORP); fnt(null,'bold'); fsz(9);
-  doc.text('TOTAL GERAL', M + 8, y + 5.5);
-  text(...WH); fnt(null,'bold'); fsz(7);
-  doc.text('DO ORCAMENTO', M + 8, y + 10.5);
-  text(...WH); fnt(null,'bold'); fsz(15);
-  doc.text(totalStr, M + CW - 4, y + 9.5, { align: 'right' });
+  text(...ORP); fnt('bold'); fsz(9);
+  doc.text('TOTAL GERAL', M + 9, y + 5.5);
+  text(...WH); fnt('bold'); fsz(7);
+  doc.text('DO ORCAMENTO', M + 9, y + 10.5);
+  text(...WH); fnt('bold'); fsz(16);
+  doc.text('R$ ' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2 }), M + CW - 4, y + 9.5, { align: 'right' });
   y += 16;
 
   // ── VALIDADE ──
@@ -966,56 +1001,69 @@ function gerarPDF() {
   const vencStr = venc ? formatarData(venc) : '...';
 
   y += 2;
-  fill(...CRD); box(M, y, CW, 26);
-  // Borda dashed laranja
+  const VBH = 28;
+  fill(...CRD); box(M, y, CW, VBH);
   draw(...OR); lw(0.5);
   doc.setLineDash([2, 1.5]);
-  doc.rect(M, y, CW, 26);
+  doc.rect(M, y, CW, VBH);
   doc.setLineDash([]);
-  // Faixa colorida no topo do bloco
-  fill(...OR); box(M, y, CW, 5);
-  text(...WH); fnt(null,'bold'); fsz(7);
-  doc.text('! ATENCAO — VALIDADE DO ORCAMENTO', M + CW / 2, y + 3.5, { align: 'center' });
 
-  text(...ORD); fnt(null,'bold'); fsz(8.5);
+  // Faixa topo bloco validade
+  fill(...OR); box(M, y, CW, 5.5);
+  text(...WH); fnt('bold'); fsz(7);
+  doc.text('! ATENCAO — VALIDADE DO ORCAMENTO', M + CW / 2, y + 4, { align: 'center' });
+
+  text(...ORD); fnt('bold'); fsz(8.5);
   doc.text(
     'Este orcamento e valido por 15 dias (' + emissaoStr + '), vencendo em ' + vencStr + '.',
-    M + 4, y + 11
+    M + 4, y + 12
   );
-  text(...DK); fnt(null,'normal'); fsz(7.8);
-  const linha2 = doc.splitTextToSize(
-    'Apos aprovacao, podem ocorrer complementos de orcamento durante a desmontagem, situacao em que o cliente sera previamente comunicado para nova autorizacao.',
+  text(...DK); fnt('normal'); fsz(7.8);
+  const vlinha = doc.splitTextToSize(
+    'Apos aprovacao, podem ocorrer complementos de orcamento durante a desmontagem, ' +
+    'situacao em que o cliente sera previamente comunicado para nova autorizacao.',
     CW - 8
   );
-  doc.text(linha2[0] || '', M + 4, y + 17.5);
-  if (linha2[1]) doc.text(linha2[1], M + 4, y + 23);
-  y += 30;
+  doc.text(vlinha[0] || '', M + 4, y + 18.5);
+  if (vlinha[1]) doc.text(vlinha[1], M + 4, y + 24);
+  y += VBH + 4;
 
-  // ── RODAPÉ ──
-  const FY = H - 30;
-  fill(...DK); box(0, FY, W, 30);
-  // Linha laranja superior do footer
-  fill(...OR); box(0, FY, W, 2);
+  // ── RODAPÉ — idêntico ao HTML ──
+  const FY = H - 28;
+  fill(...DK); box(0, FY, W, 28);
+  fill(...OR); box(0, FY, W, 2); // linha laranja topo footer
 
-  // Ícone pin
-  iconPin(M + 3, FY + 12, OR);
-  text(...CR); fnt(null,'normal'); fsz(8);
+  // Engrenagem decorativa (sutil)
+  fill(...[60, 35, 10]); lw(0.1);
+  doc.circle(W - 18, FY + 15, 10, 'F');
+  fill(...DK);
+  doc.circle(W - 18, FY + 15, 7, 'F');
+  doc.circle(W - 18, FY + 15, 4.5, 'F');
+  fill(...[50, 28, 8]);
+  doc.circle(W - 18, FY + 15, 3, 'F');
+
+  // Endereço com ícone pin
+  iconPin(M + 3, FY + 11, OR);
+  text(...CR); fnt('normal'); fsz(8.5);
   doc.text('Rua Maranho, 13, Bairro Industrial — Contagem, MG', M + 8, FY + 12);
 
-  // Ícone calendário como ID/CNPJ
-  iconCalendar(M + 3, FY + 20, BD);
-  text(...[180, 160, 140]); fnt(null,'normal'); fsz(7.5);
-  doc.text('CEP: 32.230-440   |   CNPJ: 48.549.990/0001-48', M + 8, FY + 20.5);
+  // CEP / CNPJ com ícone calendário (como no HTML usa ícone rect/doc)
+  fill(...BD); lw(0.1);
+  doc.roundedRect(M + 1, FY + 16, 4, 3, 0.3, 0.3, 'F');
+  fill(...DK);
+  doc.roundedRect(M + 1.5, FY + 17, 3, 2, 0.2, 0.2, 'F');
+  text(...[190, 165, 140]); fnt('normal'); fsz(7.5);
+  doc.text('CEP: 32.230-440   |   CNPJ: 48.549.990/0001-48', M + 8, FY + 19);
 
-  // Faixa laranja no rodapé com telefone
-  fill(...OR); box(0, FY + 22, W, 8);
-  iconPhone(M + 3, FY + 25.5, WH);
-  text(...WH); fnt(null,'bold'); fsz(11);
-  doc.text('31 99273-0811', M + 9, FY + 27.5);
-  text(...ORP); fnt(null,'normal'); fsz(7.5);
-  doc.text('AUTO MECANICA FONSECAR', W - M, FY + 27.5, { align: 'right' });
+  // Faixa telefone
+  fill(...OR); box(0, FY + 21, W, 7);
+  iconPhone(M + 3, FY + 25, WH);
+  text(...WH); fnt('bold'); fsz(12);
+  doc.text('31 99273-0811', M + 9, FY + 26.5);
+  text(...ORP); fnt('normal'); fsz(7.5);
+  doc.text('AUTO MECANICA FONSECAR', W - M, FY + 26.5, { align: 'right' });
 
-  // ── Nome do arquivo ──
+  // ── Salvar ──
   const numSafe = (d.num || 'orcamento').replace(/[^a-zA-Z0-9]/g, '_');
   const clienteNome = (d.cliente || 'cliente').replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
   doc.save(`fonsecar_${numSafe}_${clienteNome}.pdf`);
