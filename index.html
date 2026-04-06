@@ -3,108 +3,424 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#c0390b">
+<meta name="theme-color" content="#c0420a">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Fonsecar">
-<title>Fonsecar – Orçamento</title>
+<title>Fonsecar - Orçamento</title>
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="icon" href="assets/logo.png">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#1a1a1a;font-family:Arial,sans-serif;min-height:100dvh;display:flex;flex-direction:column;align-items:center}
-.topbar{width:100%;background:#c0390b;color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.4)}
-.topbar h1{font-size:1.1rem;font-weight:700;letter-spacing:.5px}
-.btn-pdf{background:#fff;color:#c0390b;border:none;border-radius:6px;padding:8px 16px;font-size:.9rem;font-weight:700;cursor:pointer}
-.btn-pdf:active{opacity:.8}
-.canvas-wrap{position:relative;width:100%;max-width:600px;margin:12px auto;padding:0 4px}
-.canvas-wrap img.fundo{width:100%;display:block;border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.5)}
-.field{position:absolute;background:transparent;border:none;outline:none;font-family:Arial,sans-serif;color:#1a1a1a;font-weight:600;padding:0 2px}
-.field:focus{background:rgba(255,220,180,.6);border-radius:3px}
-.field::placeholder{color:rgba(80,40,0,.3);font-weight:400}
-#f-data{top:19.1%;left:47%;width:50%;font-size:clamp(9px,2.5vw,14px)}
-#f-cliente{top:22.5%;left:47%;width:50%;font-size:clamp(9px,2.5vw,14px)}
-#f-telefone{top:25.8%;left:47%;width:50%;font-size:clamp(9px,2.5vw,14px)}
-#f-veiculo{top:29.5%;left:15%;width:34%;font-size:clamp(9px,2.5vw,14px)}
-#f-ano{top:29.5%;left:57%;width:12%;font-size:clamp(9px,2.5vw,14px)}
-#f-placa{top:29.5%;left:77%;width:18%;font-size:clamp(9px,2.5vw,14px)}
-.linha-desc{left:9%;width:53%;font-size:clamp(7px,2vw,11px)}
-.linha-qtd{left:67%;width:12%;font-size:clamp(7px,2vw,11px);text-align:center}
-.linha-val{left:82%;width:17%;font-size:clamp(7px,2vw,11px);text-align:right}
-#f-total{top:88.4%;left:82%;width:17%;font-size:clamp(8px,2.2vw,13px);font-weight:700;text-align:right;color:#c0390b}
-.extras{width:100%;max-width:600px;margin:0 auto 24px;padding:0 8px}
-.extras-card{background:#2a2a2a;border-radius:10px;padding:14px}
-.extras-card h2{color:#e8813a;font-size:.9rem;margin-bottom:10px;border-bottom:1px solid #444;padding-bottom:6px}
-.extras-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.fw label{display:block;color:#aaa;font-size:.7rem;margin-bottom:2px}
-.fw input{width:100%;background:#333;border:1px solid #555;border-radius:5px;padding:6px 8px;color:#eee;font-size:.85rem}
-.fw input:focus{outline:none;border-color:#e8813a}
-@media print{
-  body{background:#fff}
-  .topbar,.extras{display:none}
-  .canvas-wrap{margin:0;padding:0;max-width:100%}
-  .canvas-wrap img.fundo{border-radius:0;box-shadow:none}
-  @page{size:A4 portrait;margin:0}
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --orange: #c0420a;
+    --orange-dark: #8c2f06;
+    --font: 'Arial', sans-serif;
+  }
+  html, body {
+    min-height: 100dvh;
+    background: #1a1008;
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+  .app-header {
+    background: var(--orange-dark);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .app-header img { height: 36px; object-fit: contain; }
+  .app-header h1 {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    flex: 1;
+    text-align: center;
+  }
+  .btn-header {
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 13px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    transition: background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-header:active { background: var(--orange-dark); }
+  .btn-limpar {
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.85);
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+  .btn-limpar:active { background: rgba(255,255,255,0.1); }
+  .main-scroll {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 12px 8px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .orcamento-wrapper {
+    width: 100%;
+    max-width: 520px;
+    position: relative;
+    touch-action: pan-y;
+  }
+  .modelo-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    user-select: none;
+    pointer-events: none;
+    border-radius: 4px;
+  }
+  .campos-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+  .campo {
+    position: absolute;
+    pointer-events: all;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid rgba(192,66,10,0);
+    outline: none;
+    color: #1a0a02;
+    font-family: Arial, sans-serif;
+    font-weight: 600;
+    padding: 0 2px;
+    line-height: 1;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .campo:focus {
+    border-bottom-color: rgba(192,66,10,0.8);
+    background: rgba(255,240,200,0.4);
+    border-radius: 2px;
+  }
+  .campo::placeholder { color: rgba(140,80,30,0.4); font-weight: 400; font-size: 0.85em; }
+  .campo-item {
+    position: absolute;
+    pointer-events: all;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #1a0a02;
+    font-family: Arial, sans-serif;
+    font-weight: 500;
+    padding: 0 2px;
+    line-height: 1;
+    transition: background 0.15s;
+  }
+  .campo-item:focus { background: rgba(255,235,180,0.45); }
+  .total-display {
+    position: absolute;
+    pointer-events: none;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    text-align: right;
+    line-height: 1;
+  }
+  .toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1a1008ee;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 200;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .action-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--orange-dark);
+    padding: 10px 16px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.4);
+  }
+  .btn-action {
+    flex: 1;
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    transition: background 0.15s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-action:active { background: #8c2f06; transform: scale(0.97); }
+  .btn-action span { font-size: 10px; font-weight: 600; opacity: 0.85; }
+  @media print {
+    .app-header, .action-bar, .toast { display: none !important; }
+    html, body { background: white !important; }
+    .main-scroll { padding: 0 !important; background: white; }
+    .orcamento-wrapper { max-width: 100% !important; page-break-inside: avoid; }
+    .campo, .campo-item { border-bottom: none !important; background: transparent !important; }
+    @page { margin: 0; size: A4 portrait; }
+  }
 </style>
 </head>
 <body>
-<div class="topbar">
-  <h1>🔧 Fonsecar – Orçamento</h1>
-  <button class="btn-pdf" onclick="window.print()">🖨️ Baixar PDF</button>
-</div>
-<div class="canvas-wrap" id="canvas">
-  <img class="fundo" src="assets/modelo.jpg" alt="Orçamento Fonsecar">
-  <input class="field" id="f-data"     placeholder="dd/mm/aaaa">
-  <input class="field" id="f-cliente"  placeholder="Nome do cliente">
-  <input class="field" id="f-telefone" placeholder="(31) 00000-0000" type="tel">
-  <input class="field" id="f-veiculo"  placeholder="Modelo">
-  <input class="field" id="f-ano"      placeholder="Ano" maxlength="4">
-  <input class="field" id="f-placa"    placeholder="Placa" maxlength="8">
-  <input class="field" id="f-total" placeholder="R$ 0,00" readonly tabindex="-1">
-</div>
-<div class="extras">
-  <div class="extras-card">
-    <h2>📋 Dados extras do veículo (internos)</h2>
-    <div class="extras-grid">
-      <div class="fw"><label>Cor</label><input type="text" placeholder="Ex: Prata"></div>
-      <div class="fw"><label>KM</label><input type="text" placeholder="Ex: 85.000"></div>
-      <div class="fw"><label>Chassi</label><input type="text" placeholder="Chassi"></div>
-      <div class="fw"><label>Combustível</label><input type="text" placeholder="Gasolina / Álcool"></div>
-      <div class="fw" style="grid-column:1/-1"><label>Observações</label><input type="text" placeholder="Observações internas"></div>
+
+<header class="app-header">
+  <img src="assets/logo.png" alt="Fonsecar" onerror="this.style.display='none'">
+  <h1>Orçamento</h1>
+  <button class="btn-header btn-limpar" onclick="limparTudo()">🗑 Limpar</button>
+</header>
+
+<div class="main-scroll">
+  <div class="orcamento-wrapper" id="orcamentoBox">
+
+    <img
+      src="assets/modelo.jpeg"
+      alt="Orçamento Fonsecar"
+      class="modelo-img"
+      id="modeloImg"
+      draggable="false"
+      onload="inicializar()"
+    >
+
+    <!-- Campos do cabeçalho -->
+    <div class="campos-overlay" id="camposOverlay" style="display:none;">
+      <!-- DATA -->
+      <input type="date" class="campo" id="fData"
+        style="left:37%;top:17.6%;width:38%;height:2.6%;font-size:clamp(8px,1.8vw,13px);">
+      <!-- CLIENTE -->
+      <input type="text" class="campo" id="fCliente" placeholder="Nome do cliente" maxlength="60"
+        style="left:27.5%;top:22.2%;width:70.5%;height:2.6%;font-size:clamp(8px,1.8vw,13px);">
+      <!-- TELEFONE -->
+      <input type="tel" class="campo" id="fTelefone" placeholder="(31) 9xxxx-xxxx" maxlength="20"
+        style="left:32%;top:26.8%;width:66%;height:2.6%;font-size:clamp(8px,1.8vw,13px);">
+      <!-- VEÍCULO -->
+      <input type="text" class="campo" id="fVeiculo" placeholder="Ex: Civic EXL" maxlength="30"
+        style="left:17.5%;top:31.4%;width:36.5%;height:2.6%;font-size:clamp(8px,1.8vw,13px);">
+      <!-- ANO -->
+      <input type="text" class="campo" id="fAno" placeholder="2021" maxlength="4"
+        style="left:63.5%;top:31.4%;width:12%;height:2.6%;font-size:clamp(8px,1.8vw,13px);" inputmode="numeric">
+      <!-- PLACA -->
+      <input type="text" class="campo" id="fPlaca" placeholder="ABC0000" maxlength="8"
+        style="left:83.5%;top:31.4%;width:15%;height:2.6%;font-size:clamp(8px,1.8vw,13px);"
+        oninput="this.value=this.value.toUpperCase()">
     </div>
+
+    <!-- Itens da tabela (gerados por JS) -->
+    <div id="itensOverlay" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;display:none;"></div>
+
+    <!-- Total calculado -->
+    <div class="total-display" id="totalDisplay" style="display:none;"></div>
+
   </div>
 </div>
+
+<div class="action-bar">
+  <button class="btn-action" onclick="salvarLocal()">💾 <span>Salvar</span></button>
+  <button class="btn-action" onclick="imprimirPDF()">🖨️ <span>Imprimir/PDF</span></button>
+  <button class="btn-action" onclick="compartilhar()">📤 <span>Compartilhar</span></button>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-const LINHA_TOP = 34.1;
-const LINHA_STEP = 2.76;
-const canvas = document.getElementById('canvas');
+const NUM_ITENS = 18;
+// Coordenadas em % da ALTURA da imagem (1024x1536, proporção 2:3)
+const LINHA_TOPO  = 37.2;  // % top da linha 01
+const LINHA_H     = 3.27;  // % altura por linha
+const COL_DESC    = { l: '7.2%',  w: '55.8%' };
+const COL_QTD     = { l: '63.2%', w: '16%'   };
+const COL_VALOR   = { l: '79.8%', w: '19%'   };
+const TOTAL_TOP   = 95.55; // % top da linha total
+const TOTAL_LEFT  = 79.8;
+const TOTAL_W     = 19.2;
 
-function criarLinhas(){
-  for(let i=1;i<=18;i++){
-    const top=(LINHA_TOP+(i-1)*LINHA_STEP).toFixed(2)+'%';
-    ['desc','qtd','val'].forEach(t=>{
-      const inp=document.createElement('input');
-      inp.className='field linha-'+t;
-      inp.style.top=top;
-      inp.id='l'+i+'-'+t;
-      if(t==='val'){inp.addEventListener('input',calcTotal);}
-      canvas.appendChild(inp);
-    });
+let itens = Array.from({length: NUM_ITENS}, () => ({desc:'', qtd:'', valor:''}));
+let iniciado = false;
+
+function inicializar() {
+  if (iniciado) return;
+  iniciado = true;
+  document.getElementById('camposOverlay').style.display = '';
+  renderItens();
+  renderTotalPos();
+  carregarLocal();
+  // Atualizar ao resize
+  window.addEventListener('resize', renderTotalPos);
+}
+// Fallback se imagem já estava em cache
+if (document.getElementById('modeloImg').complete && document.getElementById('modeloImg').naturalWidth > 0) {
+  inicializar();
+}
+
+function renderItens() {
+  const ov = document.getElementById('itensOverlay');
+  ov.innerHTML = '';
+  ov.style.display = '';
+
+  for (let i = 0; i < NUM_ITENS; i++) {
+    const top = (LINHA_TOPO + i * LINHA_H).toFixed(3) + '%';
+    const h   = (LINHA_H * 0.76).toFixed(3) + '%';
+    const fs  = 'clamp(7px,1.5vw,12px)';
+
+    const inp = (tipo, col, align, pholder) => {
+      const el = document.createElement('input');
+      el.type = 'text';
+      el.className = 'campo-item';
+      el.placeholder = pholder;
+      el.value = itens[i][tipo];
+      el.style.cssText = `top:${top};left:${col.l};width:${col.w};height:${h};font-size:${fs};text-align:${align};`;
+      el.addEventListener('input', function() {
+        itens[i][tipo] = this.value;
+        if (tipo === 'valor') calcTotal();
+      });
+      return el;
+    };
+    ov.appendChild(inp('desc',  COL_DESC,  'left',   ''));
+    ov.appendChild(inp('qtd',   COL_QTD,   'center', ''));
+    ov.appendChild(inp('valor', COL_VALOR, 'right',  ''));
   }
 }
 
-function calcTotal(){
-  let tot=0;
-  for(let i=1;i<=18;i++){
-    const v=document.getElementById('l'+i+'-val');
-    if(v){tot+=parseFloat(v.value.replace(',','.').replace(/[^0-9.]/g,''))||0;}
+function calcTotal() {
+  let total = 0;
+  itens.forEach(it => {
+    const v = parseFloat(
+      (it.valor||'').replace(/R\$\s*/,'').replace(/\./g,'').replace(',','.')
+    ) || 0;
+    total += v;
+  });
+  const el = document.getElementById('totalDisplay');
+  if (total > 0) {
+    el.textContent = 'R$ ' + total.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  } else {
+    el.textContent = '';
   }
-  document.getElementById('f-total').value=tot.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 }
 
-document.getElementById('f-data').value=new Date().toLocaleDateString('pt-BR');
-criarLinhas();
-if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{});}
+function renderTotalPos() {
+  const img = document.getElementById('modeloImg');
+  const el  = document.getElementById('totalDisplay');
+  if (!img.offsetHeight) return;
+  el.style.display  = '';
+  el.style.top      = (TOTAL_TOP  / 100 * img.offsetHeight) + 'px';
+  el.style.left     = (TOTAL_LEFT / 100 * img.offsetWidth)  + 'px';
+  el.style.width    = (TOTAL_W    / 100 * img.offsetWidth)  + 'px';
+  el.style.fontSize = Math.max(9, img.offsetWidth * 0.034)  + 'px';
+  el.style.lineHeight = (LINHA_H / 100 * img.offsetHeight)  + 'px';
+}
+
+function limparTudo() {
+  if (!confirm('Limpar todos os campos?')) return;
+  document.querySelectorAll('.campo').forEach(el => el.value = '');
+  itens = Array.from({length: NUM_ITENS}, () => ({desc:'', qtd:'', valor:''}));
+  renderItens();
+  document.getElementById('totalDisplay').textContent = '';
+  toast('🗑 Formulário limpo');
+}
+
+function salvarLocal() {
+  const d = {
+    data:     document.getElementById('fData').value,
+    cliente:  document.getElementById('fCliente').value,
+    telefone: document.getElementById('fTelefone').value,
+    veiculo:  document.getElementById('fVeiculo').value,
+    ano:      document.getElementById('fAno').value,
+    placa:    document.getElementById('fPlaca').value,
+    itens
+  };
+  try {
+    localStorage.setItem('fonsecar_v2', JSON.stringify(d));
+    toast('✅ Salvo!');
+  } catch(e) { toast('⚠️ Erro ao salvar'); }
+}
+
+function carregarLocal() {
+  try {
+    const raw = localStorage.getItem('fonsecar_v2');
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d.data)     document.getElementById('fData').value     = d.data;
+    if (d.cliente)  document.getElementById('fCliente').value  = d.cliente;
+    if (d.telefone) document.getElementById('fTelefone').value = d.telefone;
+    if (d.veiculo)  document.getElementById('fVeiculo').value  = d.veiculo;
+    if (d.ano)      document.getElementById('fAno').value      = d.ano;
+    if (d.placa)    document.getElementById('fPlaca').value    = d.placa;
+    if (d.itens)    itens = d.itens;
+    renderItens();
+    calcTotal();
+    toast('📂 Orçamento carregado');
+  } catch(e) {}
+}
+
+function imprimirPDF() { window.print(); }
+
+async function compartilhar() {
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: 'Orçamento Fonsecar',
+        text: 'Orçamento – ' + (document.getElementById('fCliente').value || 'Cliente'),
+        url: window.location.href
+      });
+    } catch(e) {}
+  } else {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast('🔗 Link copiado!');
+    } catch(e) { toast('Compartilhe o link do app'); }
+  }
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
 </script>
 </body>
 </html>
