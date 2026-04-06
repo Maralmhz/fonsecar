@@ -1,339 +1,336 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#c0440a">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Fonsecar">
-<title>Fonsecar – Orçamento</title>
-<link rel="manifest" href="manifest.webmanifest">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root { --orange: #c0440a; --orange-dark: #8a2e05; --bar-h: 64px; }
-html, body { height: 100%; background: #1a1a1a; font-family: Arial, sans-serif; overscroll-behavior: none; }
-
-.topbar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  height: var(--bar-h); background: var(--orange);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-}
-.topbar h1 { color: #fff; font-size: 17px; font-weight: 700; }
-.btn-clear {
-  background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.4);
-  color: #fff; font-size: 13px; font-weight: 600;
-  padding: 6px 14px; border-radius: 20px; cursor: pointer;
-}
-.btn-clear:active { background: rgba(255,255,255,0.35); }
-
-.scroll-area {
-  position: fixed; top: var(--bar-h); bottom: var(--bar-h);
-  left: 0; right: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
-  display: flex; align-items: flex-start; justify-content: center;
-  padding: 10px 0; background: #1a1a1a;
-}
-
-#form-wrap { position: relative; width: min(440px, 100vw); flex-shrink: 0; }
-#form-wrap img#bg { display: block; width: 100%; height: auto; pointer-events: none; user-select: none; }
-
-.f {
-  position: absolute; background: transparent; border: none;
-  border-bottom: 1.5px solid rgba(139,60,5,0.45); outline: none;
-  font-family: Arial, sans-serif; font-size: clamp(7px, 1.9vw, 11px);
-  color: #1a1a1a; padding: 0 2px 1px; line-height: 1; height: 2.6%;
-}
-.f:focus { border-bottom-color: var(--orange); background: rgba(192,68,10,0.07); border-radius: 2px; }
-.f.cell { border-bottom: none; text-align: left; }
-.f.cell-num { border-bottom: none; text-align: center; }
-.f.cell-val { border-bottom: none; text-align: right; }
-
-#total-display {
-  position: absolute; font-family: Arial, sans-serif;
-  font-size: clamp(7px, 1.9vw, 11px); font-weight: 700; color: #fff;
-  text-align: right; pointer-events: none;
-  display: flex; align-items: center; justify-content: flex-end; padding-right: 3px;
-}
-
-.bottombar {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-  height: var(--bar-h); background: var(--orange-dark);
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  border-top: 2px solid rgba(255,255,255,0.15);
-}
-.bar-btn {
-  background: none; border: none; color: #fff;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 3px; cursor: pointer; font-size: 10px; font-weight: 700;
-  border-right: 1px solid rgba(255,255,255,0.12); padding: 4px;
-}
-.bar-btn:last-child { border-right: none; }
-.bar-btn:active { background: rgba(255,255,255,0.18); }
-.bar-btn svg { width: 22px; height: 22px; }
-
-#toast {
-  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
-  background: #222; color: #fff; font-size: 13px; font-weight: 600;
-  padding: 10px 22px; border-radius: 24px; opacity: 0; transition: opacity .3s;
-  pointer-events: none; z-index: 200; white-space: nowrap;
-}
-#toast.show { opacity: 1; }
-
-@media print {
-  .topbar, .bottombar, #toast { display: none !important; }
-  html, body { background: white; }
-  .scroll-area { position: static; overflow: visible; padding: 0; top: auto; bottom: auto; }
-  #form-wrap { width: 100%; max-width: 100%; }
-  .f { border-bottom: none !important; background: transparent !important; }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#C84B00">
+  <title>Fonsecar - Orçamento</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --orange: #C84B00;
+      --orange-dark: #9e3a00;
+      --dark: #1a0a00;
+      --cream: #f9f3ea;
+      --border: #e0cdb5;
+      --row-odd: #fffaf4;
+      --row-even: #f5ede0;
+      --text: #2a1500;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%; background: #111;
+      font-family: 'Oswald', sans-serif;
+      overscroll-behavior: none;
+    }
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: var(--dark);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 16px; height: 56px;
+      border-bottom: 2px solid var(--orange);
+      box-shadow: 0 2px 20px rgba(200,75,0,0.4);
+    }
+    .topbar-logo { display: flex; align-items: center; gap: 10px; }
+    .topbar-logo img { width: 42px; height: 42px; object-fit: contain; border-radius: 4px; }
+    .topbar-logo h1 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: white; letter-spacing: 2px; line-height: 1; }
+    .topbar-logo h1 span { display: block; font-size: 10px; color: #f4a96a; letter-spacing: 1px; font-family: 'Oswald', sans-serif; font-weight: 400; }
+    .btn-new { background: var(--orange); color: white; border: none; border-radius: 6px; padding: 8px 14px; font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 1px; cursor: pointer; }
+    main { padding-top: 56px; padding-bottom: 80px; display: flex; justify-content: center; background: #1a0f05; }
+    .doc { width: 100%; max-width: 480px; background: var(--cream); box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+    .doc-header { background: var(--cream); display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px 10px; border-bottom: 2px solid var(--orange); }
+    .header-logo-col img { width: 110px; height: 110px; object-fit: contain; }
+    .header-info-col { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .orcamento-title { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--orange); letter-spacing: 3px; line-height: 1; }
+    .field-group { display: flex; align-items: center; gap: 6px; }
+    .field-label { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 11px; color: var(--orange-dark); white-space: nowrap; min-width: 48px; }
+    .field-input { flex: 1; border: none; border-bottom: 1px solid var(--border); background: transparent; font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--dark); padding: 3px 4px; outline: none; min-width: 0; }
+    .field-input:focus { border-bottom-color: var(--orange); background: rgba(200,75,0,0.05); }
+    .vehicle-row { display: flex; gap: 10px; flex-wrap: wrap; padding: 8px 16px; border-bottom: 1px solid var(--border); background: #fff8f0; }
+    .items-table { width: 100%; border-collapse: collapse; }
+    .items-table thead tr { background: var(--orange); }
+    .items-table thead th { font-family: 'Bebas Neue', sans-serif; font-size: 13px; color: white; letter-spacing: 1px; padding: 8px 6px; text-align: left; }
+    .items-table thead th:nth-child(1) { width: 36px; text-align: center; }
+    .items-table thead th:nth-child(3) { width: 80px; text-align: center; }
+    .items-table thead th:nth-child(4) { width: 90px; text-align: right; }
+    .item-row td { border-bottom: 1px solid var(--border); padding: 0; vertical-align: middle; }
+    .item-row:nth-child(odd) td { background: var(--row-odd); }
+    .item-row:nth-child(even) td { background: var(--row-even); }
+    .item-row .num { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 11px; color: var(--orange-dark); text-align: center; padding: 0 4px; user-select: none; }
+    .item-row input { border: none; background: transparent; font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--dark); width: 100%; outline: none; padding: 7px 6px; }
+    .item-row input::placeholder { color: #cbb89e; font-size: 10px; }
+    .item-row input:focus { background: rgba(200,75,0,0.07); }
+    .item-row .inp-qty { text-align: center; }
+    .item-row .inp-val { text-align: right; }
+    .total-row { background: var(--orange) !important; display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; }
+    .total-label { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: white; letter-spacing: 2px; }
+    .total-value { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: white; letter-spacing: 1px; }
+    .doc-footer { background: #fff8f0; padding: 12px 16px; display: flex; gap: 12px; align-items: flex-start; border-top: 2px solid var(--border); }
+    .footer-info { flex: 1; font-size: 11px; color: var(--dark); line-height: 1.6; }
+    .footer-info .phone { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: var(--orange); letter-spacing: 1px; }
+    .footer-gears { opacity: 0.15; font-size: 48px; line-height: 1; }
+    .obs-section { padding: 8px 16px; border-top: 1px solid var(--border); }
+    .obs-section textarea { width: 100%; border: 1px solid var(--border); background: #fff8f0; border-radius: 4px; font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--dark); padding: 6px; outline: none; resize: none; height: 56px; }
+    .obs-section textarea:focus { border-color: var(--orange); }
+    .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--dark); display: flex; border-top: 2px solid var(--orange); z-index: 100; }
+    .bottom-bar button { flex: 1; padding: 14px 0; background: none; border: none; color: #f4a96a; font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 1px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; border-right: 1px solid rgba(200,75,0,0.3); }
+    .bottom-bar button:last-child { border-right: none; }
+    .bottom-bar button:active { background: rgba(200,75,0,0.2); }
+    .bottom-bar button svg { width: 20px; height: 20px; }
+    @media print {
+      .topbar, .bottom-bar, .btn-new { display: none !important; }
+      main { padding: 0 !important; background: white !important; }
+      body { background: white !important; }
+      .doc { box-shadow: none !important; max-width: 100% !important; width: 100% !important; }
+    }
+    @page { size: A4 portrait; margin: 10mm; }
+  </style>
 </head>
 <body>
 
-<div class="topbar">
-  <h1>🔧 Fonsecar – Orçamento</h1>
-  <button class="btn-clear" onclick="limpar()">🗑 Limpar</button>
-</div>
+<header class="topbar">
+  <div class="topbar-logo">
+    <img src="assets/logo.jpg" alt="Fonsecar">
+    <h1>FONSECAR<span>Auto Mecânica</span></h1>
+  </div>
+  <button class="btn-new" onclick="newOrcamento()">+ NOVO</button>
+</header>
 
-<div class="scroll-area">
-<div id="form-wrap">
+<main>
+  <div class="doc" id="docRoot">
+    <div class="doc-header">
+      <div class="header-logo-col">
+        <img src="assets/logo.jpg" alt="Fonsecar Logo">
+      </div>
+      <div class="header-info-col">
+        <div class="orcamento-title">ORÇAMENTO</div>
+        <div class="field-group">
+          <span class="field-label">Nº</span>
+          <input class="field-input" id="num" style="width:70px" placeholder="0001" maxlength="6">
+          <span class="field-label" style="margin-left:8px">Data</span>
+          <input class="field-input" id="data" type="date" style="width:130px">
+        </div>
+        <div class="field-group">
+          <span class="field-label">Cliente</span>
+          <input class="field-input" id="cliente" placeholder="Nome completo">
+        </div>
+        <div class="field-group">
+          <span class="field-label">Telefone</span>
+          <input class="field-input" id="telefone" placeholder="(31) 9 0000-0000" inputmode="tel">
+        </div>
+      </div>
+    </div>
+    <div class="vehicle-row">
+      <div class="field-group" style="flex:3">
+        <span class="field-label">Veículo</span>
+        <input class="field-input" id="veiculo" placeholder="Modelo / Marca">
+      </div>
+      <div class="field-group" style="flex:1">
+        <span class="field-label">Ano</span>
+        <input class="field-input" id="ano" placeholder="2021" maxlength="4" inputmode="numeric">
+      </div>
+      <div class="field-group" style="flex:1">
+        <span class="field-label">Placa</span>
+        <input class="field-input" id="placa" placeholder="ABC-1234" maxlength="8" style="text-transform:uppercase">
+      </div>
+    </div>
+    <div class="vehicle-row">
+      <div class="field-group" style="flex:1">
+        <span class="field-label">Cor</span>
+        <input class="field-input" id="cor" placeholder="Prata">
+      </div>
+      <div class="field-group" style="flex:1">
+        <span class="field-label">KM</span>
+        <input class="field-input" id="km" placeholder="45.000" inputmode="numeric">
+      </div>
+      <div class="field-group" style="flex:1">
+        <span class="field-label">Comb.</span>
+        <input class="field-input" id="comb" placeholder="Flex">
+      </div>
+    </div>
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Nº</th>
+          <th>DESCRIÇÃO</th>
+          <th style="text-align:center">QTDE</th>
+          <th style="text-align:right">VALOR R$</th>
+        </tr>
+      </thead>
+      <tbody id="itemsBody"></tbody>
+    </table>
+    <div class="total-row">
+      <span class="total-label">TOTAL</span>
+      <span class="total-value" id="totalDisplay">R$ 0,00</span>
+    </div>
+    <div class="obs-section">
+      <div class="field-label" style="margin-bottom:4px">Observações</div>
+      <textarea id="obs" placeholder="Prazo de entrega, garantia, condições..."></textarea>
+    </div>
+    <div class="doc-footer">
+      <div class="footer-info">
+        <div>📍 Rua Maranhão, 13 - Bairro Industrial</div>
+        <div>Contagem - MG &middot; CEP 32230-440</div>
+        <div>CNPJ 48.549.990/0001-48</div>
+        <div class="phone">☎ 31 99273-0811</div>
+      </div>
+      <div class="footer-gears">⚙⚙</div>
+    </div>
+  </div>
+</main>
 
-<img id="bg" src="assets/modelo.jpeg" alt="Orçamento Fonsecar" crossorigin="anonymous">
-
-  <!-- CABEÇALHO DIREITO: DATA / CLIENTE / TELEFONE -->
-  <!-- A imagem tem ~768px de altura. DATA fica ~19.5%, CLIENTE ~23.5%, TELEFONE ~27.5% -->
-  <!-- Lado direito começa em ~52% do bloco -->
-  <input class="f" id="data"     type="text" placeholder="dd/mm/aaaa" style="top:19.4%;left:52%;width:42%;">
-  <input class="f" id="cliente"  type="text" placeholder=""           style="top:23.4%;left:52%;width:42%;">
-  <input class="f" id="telefone" type="tel"  placeholder=""           style="top:27.4%;left:52%;width:42%;">
-
-  <!-- LINHA VEÍCULO / ANO / PLACA -->
-  <!-- Veículo: após "VEÍCULO:" que termina ~16%, ANO após "ANO:" ~63%, PLACA após "PLACA:" ~79% -->
-  <input class="f" id="veiculo"  type="text" placeholder="" style="top:31.8%;left:15.5%;width:43%;">
-  <input class="f" id="ano"      type="text" placeholder="" style="top:31.8%;left:63%;width:11%;">
-  <input class="f" id="placa"    type="text" placeholder="" style="top:31.8%;left:80%;width:15%;">
-
-  <!-- TABELA: 18 linhas
-       Área da tabela: left da descrição ~10%, qtd ~67%, valor ~82%
-       Primeira linha ~36.8%, incremento ~3.17% por linha
-       Largura: desc 54%, qtd 12%, val 13%
-  -->
-  <input class="f cell"     id="d1"  type="text" style="top:36.8%;left:10%;width:54%;"><input class="f cell-num" id="q1"  type="text" style="top:36.8%;left:67%;width:12%;"><input class="f cell-val" id="v1"  type="text" style="top:36.8%;left:82%;width:13%;">
-  <input class="f cell"     id="d2"  type="text" style="top:39.97%;left:10%;width:54%;"><input class="f cell-num" id="q2"  type="text" style="top:39.97%;left:67%;width:12%;"><input class="f cell-val" id="v2"  type="text" style="top:39.97%;left:82%;width:13%;">
-  <input class="f cell"     id="d3"  type="text" style="top:43.14%;left:10%;width:54%;"><input class="f cell-num" id="q3"  type="text" style="top:43.14%;left:67%;width:12%;"><input class="f cell-val" id="v3"  type="text" style="top:43.14%;left:82%;width:13%;">
-  <input class="f cell"     id="d4"  type="text" style="top:46.31%;left:10%;width:54%;"><input class="f cell-num" id="q4"  type="text" style="top:46.31%;left:67%;width:12%;"><input class="f cell-val" id="v4"  type="text" style="top:46.31%;left:82%;width:13%;">
-  <input class="f cell"     id="d5"  type="text" style="top:49.48%;left:10%;width:54%;"><input class="f cell-num" id="q5"  type="text" style="top:49.48%;left:67%;width:12%;"><input class="f cell-val" id="v5"  type="text" style="top:49.48%;left:82%;width:13%;">
-  <input class="f cell"     id="d6"  type="text" style="top:52.65%;left:10%;width:54%;"><input class="f cell-num" id="q6"  type="text" style="top:52.65%;left:67%;width:12%;"><input class="f cell-val" id="v6"  type="text" style="top:52.65%;left:82%;width:13%;">
-  <input class="f cell"     id="d7"  type="text" style="top:55.82%;left:10%;width:54%;"><input class="f cell-num" id="q7"  type="text" style="top:55.82%;left:67%;width:12%;"><input class="f cell-val" id="v7"  type="text" style="top:55.82%;left:82%;width:13%;">
-  <input class="f cell"     id="d8"  type="text" style="top:58.99%;left:10%;width:54%;"><input class="f cell-num" id="q8"  type="text" style="top:58.99%;left:67%;width:12%;"><input class="f cell-val" id="v8"  type="text" style="top:58.99%;left:82%;width:13%;">
-  <input class="f cell"     id="d9"  type="text" style="top:62.16%;left:10%;width:54%;"><input class="f cell-num" id="q9"  type="text" style="top:62.16%;left:67%;width:12%;"><input class="f cell-val" id="v9"  type="text" style="top:62.16%;left:82%;width:13%;">
-  <input class="f cell"     id="d10" type="text" style="top:65.33%;left:10%;width:54%;"><input class="f cell-num" id="q10" type="text" style="top:65.33%;left:67%;width:12%;"><input class="f cell-val" id="v10" type="text" style="top:65.33%;left:82%;width:13%;">
-  <input class="f cell"     id="d11" type="text" style="top:68.50%;left:10%;width:54%;"><input class="f cell-num" id="q11" type="text" style="top:68.50%;left:67%;width:12%;"><input class="f cell-val" id="v11" type="text" style="top:68.50%;left:82%;width:13%;">
-  <input class="f cell"     id="d12" type="text" style="top:71.67%;left:10%;width:54%;"><input class="f cell-num" id="q12" type="text" style="top:71.67%;left:67%;width:12%;"><input class="f cell-val" id="v12" type="text" style="top:71.67%;left:82%;width:13%;">
-  <input class="f cell"     id="d13" type="text" style="top:74.84%;left:10%;width:54%;"><input class="f cell-num" id="q13" type="text" style="top:74.84%;left:67%;width:12%;"><input class="f cell-val" id="v13" type="text" style="top:74.84%;left:82%;width:13%;">
-  <input class="f cell"     id="d14" type="text" style="top:78.01%;left:10%;width:54%;"><input class="f cell-num" id="q14" type="text" style="top:78.01%;left:67%;width:12%;"><input class="f cell-val" id="v14" type="text" style="top:78.01%;left:82%;width:13%;">
-  <input class="f cell"     id="d15" type="text" style="top:81.18%;left:10%;width:54%;"><input class="f cell-num" id="q15" type="text" style="top:81.18%;left:67%;width:12%;"><input class="f cell-val" id="v15" type="text" style="top:81.18%;left:82%;width:13%;">
-  <input class="f cell"     id="d16" type="text" style="top:84.35%;left:10%;width:54%;"><input class="f cell-num" id="q16" type="text" style="top:84.35%;left:67%;width:12%;"><input class="f cell-val" id="v16" type="text" style="top:84.35%;left:82%;width:13%;">
-  <input class="f cell"     id="d17" type="text" style="top:87.52%;left:10%;width:54%;"><input class="f cell-num" id="q17" type="text" style="top:87.52%;left:67%;width:12%;"><input class="f cell-val" id="v17" type="text" style="top:87.52%;left:82%;width:13%;">
-  <input class="f cell"     id="d18" type="text" style="top:90.69%;left:10%;width:54%;"><input class="f cell-num" id="q18" type="text" style="top:90.69%;left:67%;width:12%;"><input class="f cell-val" id="v18" type="text" style="top:90.69%;left:82%;width:13%;">
-
-  <!-- TOTAL na faixa laranja "TOTAL" -->
-  <div id="total-display" style="top:93.6%;left:66%;width:29%;height:2.6%;">R$ 0,00</div>
-
-</div>
-</div>
-
-<div class="bottombar">
-  <button class="bar-btn" onclick="salvar()">
+<div class="bottom-bar">
+  <button onclick="saveDraft()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
     Salvar
   </button>
-  <button class="bar-btn" onclick="baixarPDF()">
+  <button onclick="downloadPDF()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     Baixar PDF
   </button>
-  <button class="bar-btn" onclick="imprimir()">
+  <button onclick="printDoc()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
     Imprimir
   </button>
-  <button class="bar-btn" onclick="enviarPDF()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-    Enviar PDF
+  <button onclick="sharePDF()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    Enviar
   </button>
 </div>
 
-<div id="toast"></div>
-
 <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(function(){});
-}
+  const ROWS = 20;
 
-var CAB = ['data','cliente','telefone','veiculo','ano','placa'];
-var N = 18;
-
-function toast(msg, dur) {
-  dur = dur || 2200;
-  var el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(function(){ el.classList.remove('show'); }, dur);
-}
-
-function calcTotal() {
-  var total = 0;
-  for (var i = 1; i <= N; i++) {
-    var raw = document.getElementById('v'+i).value.replace(/[R$\s.]/g,'').replace(',','.');
-    var n = parseFloat(raw);
-    if (!isNaN(n)) total += n;
-  }
-  document.getElementById('total-display').textContent =
-    'R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
-  return total;
-}
-
-for (var i = 1; i <= N; i++) {
-  (function(idx){
-    document.getElementById('v'+idx).addEventListener('input', calcTotal);
-  })(i);
-}
-
-var today = new Date();
-var dd = String(today.getDate()).padStart(2,'0');
-var mm2 = String(today.getMonth()+1).padStart(2,'0');
-var yyyy = today.getFullYear();
-var dataEl = document.getElementById('data');
-if (!dataEl.value) dataEl.value = dd+'/'+mm2+'/'+yyyy;
-
-function salvar() {
-  try {
-    var data = {};
-    CAB.forEach(function(id){ data[id] = document.getElementById(id).value; });
-    for (var i = 1; i <= N; i++) {
-      data['d'+i] = document.getElementById('d'+i).value;
-      data['q'+i] = document.getElementById('q'+i).value;
-      data['v'+i] = document.getElementById('v'+i).value;
+  function buildRows() {
+    const tbody = document.getElementById('itemsBody');
+    tbody.innerHTML = '';
+    for (let i = 1; i <= ROWS; i++) {
+      const tr = document.createElement('tr');
+      tr.className = 'item-row';
+      tr.innerHTML = `
+        <td class="num">${String(i).padStart(2,'0')}</td>
+        <td><input class="inp-desc" placeholder="Descrição do serviço ou peça" oninput="calcTotal()"></td>
+        <td><input class="inp-qty" placeholder="1" inputmode="decimal" oninput="calcTotal()"></td>
+        <td><input class="inp-val" placeholder="0,00" inputmode="decimal" oninput="calcTotal()"></td>
+      `;
+      tbody.appendChild(tr);
     }
-    localStorage.setItem('fonsecar_orc', JSON.stringify(data));
-    toast('✅ Salvo com sucesso!');
-  } catch(e) {
-    toast('✅ Salvo na sessao atual');
   }
-}
 
-function carregar() {
-  try {
-    var raw = localStorage.getItem('fonsecar_orc');
-    if (!raw) return;
-    var data = JSON.parse(raw);
-    CAB.forEach(function(id){ if(data[id]) document.getElementById(id).value = data[id]; });
-    for (var i = 1; i <= N; i++) {
-      if(data['d'+i]) document.getElementById('d'+i).value = data['d'+i];
-      if(data['q'+i]) document.getElementById('q'+i).value = data['q'+i];
-      if(data['v'+i]) document.getElementById('v'+i).value = data['v'+i];
+  function calcTotal() {
+    let total = 0;
+    document.querySelectorAll('.item-row').forEach(tr => {
+      const qty = parseFloat(tr.querySelector('.inp-qty').value.replace(',','.')) || 1;
+      const val = parseFloat(tr.querySelector('.inp-val').value.replace(',','.')) || 0;
+      if (val > 0) total += qty * val;
+    });
+    document.getElementById('totalDisplay').textContent = 'R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function newOrcamento() {
+    if (!confirm('Limpar tudo e iniciar novo orçamento?')) return;
+    ['num','data','cliente','telefone','veiculo','ano','placa','cor','km','comb','obs'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+    document.querySelectorAll('.item-row input').forEach(inp => inp.value = '');
+    document.getElementById('totalDisplay').textContent = 'R$ 0,00';
+    const n = (parseInt(localStorage.getItem('lastNum') || '0') + 1);
+    document.getElementById('num').value = String(n).padStart(4,'0');
+    document.getElementById('data').value = new Date().toISOString().split('T')[0];
+  }
+
+  function saveDraft() {
+    const data = collectData();
+    localStorage.setItem('fonsecar_draft', JSON.stringify(data));
+    localStorage.setItem('lastNum', parseInt(document.getElementById('num').value) || 0);
+    showToast('✅ Salvo!');
+  }
+
+  function collectData() {
+    const rows = [];
+    document.querySelectorAll('.item-row').forEach(tr => {
+      rows.push({ desc: tr.querySelector('.inp-desc').value, qty: tr.querySelector('.inp-qty').value, val: tr.querySelector('.inp-val').value });
+    });
+    return { num: document.getElementById('num').value, data: document.getElementById('data').value, cliente: document.getElementById('cliente').value, telefone: document.getElementById('telefone').value, veiculo: document.getElementById('veiculo').value, ano: document.getElementById('ano').value, placa: document.getElementById('placa').value, cor: document.getElementById('cor').value, km: document.getElementById('km').value, comb: document.getElementById('comb').value, obs: document.getElementById('obs').value, rows };
+  }
+
+  function loadDraft(d) {
+    if (!d) return;
+    ['num','data','cliente','telefone','veiculo','ano','placa','cor','km','comb','obs'].forEach(id => {
+      if (d[id] !== undefined) { const el = document.getElementById(id); if(el) el.value = d[id]; }
+    });
+    if (d.rows) {
+      const trs = document.querySelectorAll('.item-row');
+      d.rows.forEach((r, i) => {
+        if (trs[i]) { trs[i].querySelector('.inp-desc').value = r.desc||''; trs[i].querySelector('.inp-qty').value = r.qty||''; trs[i].querySelector('.inp-val').value = r.val||''; }
+      });
     }
     calcTotal();
-  } catch(e) {}
-}
-carregar();
-
-function limpar() {
-  if (!confirm('Limpar todos os campos?')) return;
-  CAB.forEach(function(id){ document.getElementById(id).value = ''; });
-  for (var i = 1; i <= N; i++) {
-    document.getElementById('d'+i).value = '';
-    document.getElementById('q'+i).value = '';
-    document.getElementById('v'+i).value = '';
   }
-  document.getElementById('data').value = dd+'/'+mm2+'/'+yyyy;
-  calcTotal();
-  try { localStorage.removeItem('fonsecar_orc'); } catch(e){}
-}
 
-function gerarCanvas() {
-  var totalEl = document.getElementById('total-display');
-  var totalTxt = totalEl.textContent;
-  totalEl.style.color = 'transparent';
-  var wrap = document.getElementById('form-wrap');
-  return html2canvas(wrap, {
-    scale: 2, useCORS: true, allowTaint: true,
-    backgroundColor: null, logging: false
-  }).then(function(canvas) {
-    totalEl.style.color = '#fff';
-    var ctx = canvas.getContext('2d');
-    var wrapRect = wrap.getBoundingClientRect();
-    var totalRect = totalEl.getBoundingClientRect();
-    var scale = 2;
-    var x = (totalRect.right - wrapRect.left) * scale - 4;
-    var y = (totalRect.top - wrapRect.top + totalRect.height * 0.72) * scale;
-    ctx.font = 'bold ' + Math.round(11 * scale) + 'px Arial';
-    ctx.fillStyle = '#ffffff';
-    ctx.textAlign = 'right';
-    ctx.fillText(totalTxt, x, y);
-    return canvas;
+  async function downloadPDF() {
+    showToast('⏳ Gerando PDF...');
+    const { jsPDF } = window.jspdf;
+    try {
+      const canvas = await html2canvas(document.getElementById('docRoot'), { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#f9f3ea' });
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+      const pdf = new jsPDF('p','mm','a4');
+      const imgW = 210, imgH = (canvas.height * 210) / canvas.width;
+      if (imgH <= 297) { pdf.addImage(imgData,'JPEG',0,0,imgW,imgH); }
+      else { let y=0, rem=imgH; while(rem>0){ pdf.addImage(imgData,'JPEG',0,y,imgW,imgH); rem-=297; y-=297; if(rem>0) pdf.addPage(); } }
+      const num = document.getElementById('num').value||'orcamento';
+      const cli = document.getElementById('cliente').value.replace(/\s+/g,'_')||'cliente';
+      pdf.save(`Fonsecar_Orcamento_${num}_${cli}.pdf`);
+      showToast('✅ PDF baixado!');
+    } catch(e) { showToast('❌ Erro: '+e.message); }
+  }
+
+  function printDoc() { window.print(); }
+
+  async function sharePDF() {
+    showToast('⏳ Preparando...');
+    const { jsPDF } = window.jspdf;
+    try {
+      const canvas = await html2canvas(document.getElementById('docRoot'), { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#f9f3ea' });
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+      const pdf = new jsPDF('p','mm','a4');
+      const imgW = 210, imgH = (canvas.height * 210) / canvas.width;
+      pdf.addImage(imgData,'JPEG',0,0,imgW,Math.min(imgH,297));
+      const blob = pdf.output('blob');
+      const num = document.getElementById('num').value||'orcamento';
+      const file = new File([blob], `Fonsecar_Orcamento_${num}.pdf`, {type:'application/pdf'});
+      if (navigator.canShare && navigator.canShare({files:[file]})) {
+        await navigator.share({ title: 'Orçamento Fonsecar Nº '+num, files:[file] });
+        showToast('✅ Compartilhado!');
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download=file.name; a.click();
+        URL.revokeObjectURL(url);
+        showToast('📥 PDF salvo (compartilhamento não disponível aqui)');
+      }
+    } catch(e) { if(e.name!=='AbortError') showToast('❌ '+e.message); }
+  }
+
+  function showToast(msg) {
+    let t = document.getElementById('toast');
+    if (!t) { t=document.createElement('div'); t.id='toast'; t.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1a0a00;color:#f4a96a;padding:10px 20px;border-radius:20px;font-family:Oswald,sans-serif;font-size:14px;z-index:999;border:1px solid #C84B00;box-shadow:0 4px 20px rgba(200,75,0,0.3)'; document.body.appendChild(t); }
+    t.textContent=msg; t.style.display='block';
+    clearTimeout(t._timer); t._timer=setTimeout(()=>{ t.style.display='none'; },2500);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    buildRows();
+    document.getElementById('data').value = new Date().toISOString().split('T')[0];
+    const draft = localStorage.getItem('fonsecar_draft');
+    if (draft) { try { loadDraft(JSON.parse(draft)); } catch(e) {} }
+    else { document.getElementById('num').value = '0001'; }
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(()=>{}); }
   });
-}
-
-function baixarPDF() {
-  toast('⏳ Gerando PDF...', 6000);
-  gerarCanvas().then(function(canvas) {
-    var jsPDF = window.jspdf.jsPDF;
-    var pdf = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
-    var imgData = canvas.toDataURL('image/jpeg', 0.95);
-    var pW = pdf.internal.pageSize.getWidth();
-    var pH = pdf.internal.pageSize.getHeight();
-    var ratio = Math.min(pW/canvas.width, pH/canvas.height);
-    var w = canvas.width * ratio;
-    var h = canvas.height * ratio;
-    pdf.addImage(imgData, 'JPEG', (pW-w)/2, (pH-h)/2, w, h);
-    pdf.save('orcamento-fonsecar.pdf');
-    toast('✅ PDF baixado!');
-  }).catch(function(e){
-    toast('❌ Erro ao gerar PDF');
-    console.error(e);
-  });
-}
-
-function imprimir() {
-  window.print();
-}
-
-function enviarPDF() {
-  toast('⏳ Preparando PDF...', 6000);
-  gerarCanvas().then(function(canvas) {
-    var jsPDF = window.jspdf.jsPDF;
-    var pdf = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
-    var imgData = canvas.toDataURL('image/jpeg', 0.95);
-    var pW = pdf.internal.pageSize.getWidth();
-    var pH = pdf.internal.pageSize.getHeight();
-    var ratio = Math.min(pW/canvas.width, pH/canvas.height);
-    var w = canvas.width * ratio;
-    var h = canvas.height * ratio;
-    pdf.addImage(imgData, 'JPEG', (pW-w)/2, (pH-h)/2, w, h);
-    var blob = pdf.output('blob');
-    var file = new File([blob], 'orcamento-fonsecar.pdf', {type:'application/pdf'});
-    if (navigator.canShare && navigator.canShare({files:[file]})) {
-      navigator.share({files:[file], title:'Orcamento Fonsecar'})
-        .then(function(){ toast('✅ PDF compartilhado!'); })
-        .catch(function(e){ if(e.name!=='AbortError') toast('Cancelado'); });
-    } else {
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = url; a.download = 'orcamento-fonsecar.pdf'; a.click();
-      setTimeout(function(){ URL.revokeObjectURL(url); }, 3000);
-      toast('✅ PDF baixado!');
-    }
-  }).catch(function(e){
-    toast('❌ Erro ao enviar PDF');
-    console.error(e);
-  });
-}
-
-setInterval(salvar, 30000);
 </script>
 </body>
 </html>
