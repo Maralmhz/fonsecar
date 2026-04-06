@@ -17,12 +17,11 @@
   :root {
     --orange: #c0420a;
     --orange-dark: #8c2f06;
-    --font: 'Arial', sans-serif;
   }
   html, body {
     min-height: 100dvh;
     background: #1a1008;
-    font-family: var(--font);
+    font-family: Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     overscroll-behavior: none;
   }
@@ -79,13 +78,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
   }
   .orcamento-wrapper {
     width: 100%;
-    max-width: 520px;
+    max-width: 540px;
     position: relative;
-    touch-action: pan-y;
   }
   .modelo-img {
     width: 100%;
@@ -95,46 +92,47 @@
     pointer-events: none;
     border-radius: 4px;
   }
-  .campos-overlay {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-  }
+  /* Todos os campos ficam sobre a imagem usando posicionamento em % */
+  /* A imagem tem proporção 1024x1536 = 2:3 */
+  /* Coordenadas medidas em pixels na imagem original, convertidas para % */
+  /* x% = px/1024*100   y% = px/1536*100 */
+
   .campo {
     position: absolute;
     pointer-events: all;
     background: transparent;
     border: none;
-    border-bottom: 1.5px solid rgba(192,66,10,0);
+    border-bottom: 1px solid transparent;
     outline: none;
-    color: #1a0a02;
+    color: #2a1005;
     font-family: Arial, sans-serif;
     font-weight: 600;
-    padding: 0 2px;
+    padding: 0 3px;
     line-height: 1;
     transition: border-color 0.15s, background 0.15s;
+    -webkit-tap-highlight-color: transparent;
   }
   .campo:focus {
-    border-bottom-color: rgba(192,66,10,0.8);
-    background: rgba(255,240,200,0.4);
+    border-bottom-color: rgba(192,66,10,0.7);
+    background: rgba(255,245,210,0.5);
     border-radius: 2px;
   }
-  .campo::placeholder { color: rgba(140,80,30,0.4); font-weight: 400; font-size: 0.85em; }
+  .campo::placeholder { color: rgba(150,90,40,0.45); font-weight: 400; }
   .campo-item {
     position: absolute;
     pointer-events: all;
     background: transparent;
     border: none;
     outline: none;
-    color: #1a0a02;
+    color: #2a1005;
     font-family: Arial, sans-serif;
     font-weight: 500;
     padding: 0 2px;
     line-height: 1;
     transition: background 0.15s;
+    -webkit-tap-highlight-color: transparent;
   }
-  .campo-item:focus { background: rgba(255,235,180,0.45); }
+  .campo-item:focus { background: rgba(255,240,180,0.5); border-radius: 2px; }
   .total-display {
     position: absolute;
     pointer-events: none;
@@ -222,27 +220,37 @@
       onload="inicializar()"
     >
 
-    <!-- Campos do cabeçalho -->
-    <div class="campos-overlay" id="camposOverlay" style="display:none;">
+    <!-- =====================================================
+         CAMPOS DO CABEÇALHO
+         Coordenadas medidas na imagem 1024×1536:
+           DATA campo:    x=638-962, y=178-197  → left=62.3%, top=11.6%, w=31.6%, h=1.25%
+           Cliente:       x=130-963, y=238-257  → left=12.7%, top=15.5%, w=81.4%, h=1.25%
+           Endereço:      x=157-963, y=280-299  → left=15.3%, top=18.2%, w=78.7%, h=1.25%
+           Cidade:        x=107-600, y=320-339  → left=10.4%, top=20.8%, w=48.1%, h=1.25%
+           Telefone:      x=137-600, y=362-381  → left=13.4%, top=23.6%, w=45.3%, h=1.25%
+         ===================================================== -->
+    <div id="camposOverlay" style="display:none;">
+
       <!-- DATA -->
       <input type="date" class="campo" id="fData"
-        style="left:37%;top:17.6%;width:38%;height:2.6%;font-size:clamp(8px,1.8vw,13px);">
+        style="left:62.3%;top:11.6%;width:31.6%;height:1.6%;font-size:clamp(7px,1.6vw,12px);">
+
       <!-- CLIENTE -->
-      <input type="text" class="campo" id="fCliente" placeholder="Nome do cliente" maxlength="60"
-        style="left:27.5%;top:22.2%;width:70.5%;height:2.6%;font-size:clamp(8px,1.8vw,13px);">
+      <input type="text" class="campo" id="fCliente" placeholder="Nome completo" maxlength="55"
+        style="left:12.7%;top:15.5%;width:81.4%;height:1.6%;font-size:clamp(7px,1.6vw,12px);">
+
+      <!-- ENDEREÇO -->
+      <input type="text" class="campo" id="fEndereco" placeholder="Endereço" maxlength="60"
+        style="left:15.3%;top:18.2%;width:78.7%;height:1.6%;font-size:clamp(7px,1.6vw,12px);">
+
+      <!-- CIDADE -->
+      <input type="text" class="campo" id="fCidade" placeholder="Cidade" maxlength="40"
+        style="left:10.4%;top:20.8%;width:48.1%;height:1.6%;font-size:clamp(7px,1.6vw,12px);">
+
       <!-- TELEFONE -->
       <input type="tel" class="campo" id="fTelefone" placeholder="(31) 9xxxx-xxxx" maxlength="20"
-        style="left:32%;top:26.8%;width:66%;height:2.6%;font-size:clamp(8px,1.8vw,13px);">
-      <!-- VEÍCULO -->
-      <input type="text" class="campo" id="fVeiculo" placeholder="Ex: Civic EXL" maxlength="30"
-        style="left:17.5%;top:31.4%;width:36.5%;height:2.6%;font-size:clamp(8px,1.8vw,13px);">
-      <!-- ANO -->
-      <input type="text" class="campo" id="fAno" placeholder="2021" maxlength="4"
-        style="left:63.5%;top:31.4%;width:12%;height:2.6%;font-size:clamp(8px,1.8vw,13px);" inputmode="numeric">
-      <!-- PLACA -->
-      <input type="text" class="campo" id="fPlaca" placeholder="ABC0000" maxlength="8"
-        style="left:83.5%;top:31.4%;width:15%;height:2.6%;font-size:clamp(8px,1.8vw,13px);"
-        oninput="this.value=this.value.toUpperCase()">
+        style="left:13.4%;top:23.6%;width:45.3%;height:1.6%;font-size:clamp(7px,1.6vw,12px);">
+
     </div>
 
     <!-- Itens da tabela (gerados por JS) -->
@@ -256,23 +264,41 @@
 
 <div class="action-bar">
   <button class="btn-action" onclick="salvarLocal()">💾 <span>Salvar</span></button>
-  <button class="btn-action" onclick="imprimirPDF()">🖨️ <span>Imprimir/PDF</span></button>
+  <button class="btn-action" onclick="imprimirPDF()">🖨️ <span>PDF</span></button>
   <button class="btn-action" onclick="compartilhar()">📤 <span>Compartilhar</span></button>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const NUM_ITENS = 18;
-// Coordenadas em % da ALTURA da imagem (1024x1536, proporção 2:3)
-const LINHA_TOPO  = 37.2;  // % top da linha 01
-const LINHA_H     = 3.27;  // % altura por linha
-const COL_DESC    = { l: '7.2%',  w: '55.8%' };
-const COL_QTD     = { l: '63.2%', w: '16%'   };
-const COL_VALOR   = { l: '79.8%', w: '19%'   };
-const TOTAL_TOP   = 95.55; // % top da linha total
-const TOTAL_LEFT  = 79.8;
-const TOTAL_W     = 19.2;
+// =====================================================
+// COORDENADAS DA TABELA (medidas na imagem 1024×1536)
+// Cabeçalho tabela: y=435-479
+// Linha 01 começa: y=479  altura por linha: 31px
+// 20 linhas → y_fim = 479 + 20*31 = 1099
+// Colunas (em px na imagem):
+//   Descrição:  x=67-701  → left=6.5%  width=61.9%
+//   Quantidade: x=704-831 → left=68.7% width=12.4%
+//   Valor:      x=834-967 → left=81.4% width=13.0%
+//   Total val:  x=834-967 → left=81.4% width=13.0%  y=1099+15=1114 → top=72.5%
+// Em %:
+//   LINHA_TOPO = 479/1536*100 = 31.19%
+//   LINHA_H    = 31/1536*100  = 2.018%
+// =====================================================
+const NUM_ITENS  = 20;
+const LINHA_TOPO = 31.19;   // % top da linha 01
+const LINHA_H    = 2.018;   // % altura por linha
+const COL = {
+  desc:  { l: '6.5%',  w: '61.4%' },
+  qtd:   { l: '68.7%', w: '12.4%' },
+  valor: { l: '81.4%', w: '13.0%' }
+};
+// Total: y=1099-1132, centro y=1115 → top=72.6%
+const TOTAL_CSS = {
+  top:   '72.6%',
+  left:  '81.4%',
+  width: '13.0%'
+};
 
 let itens = Array.from({length: NUM_ITENS}, () => ({desc:'', qtd:'', valor:''}));
 let iniciado = false;
@@ -282,15 +308,14 @@ function inicializar() {
   iniciado = true;
   document.getElementById('camposOverlay').style.display = '';
   renderItens();
-  renderTotalPos();
+  posicionarTotal();
   carregarLocal();
-  // Atualizar ao resize
-  window.addEventListener('resize', renderTotalPos);
+  window.addEventListener('resize', posicionarTotal);
 }
+
 // Fallback se imagem já estava em cache
-if (document.getElementById('modeloImg').complete && document.getElementById('modeloImg').naturalWidth > 0) {
-  inicializar();
-}
+const _img = document.getElementById('modeloImg');
+if (_img.complete && _img.naturalWidth > 0) inicializar();
 
 function renderItens() {
   const ov = document.getElementById('itensOverlay');
@@ -298,15 +323,15 @@ function renderItens() {
   ov.style.display = '';
 
   for (let i = 0; i < NUM_ITENS; i++) {
-    const top = (LINHA_TOPO + i * LINHA_H).toFixed(3) + '%';
-    const h   = (LINHA_H * 0.76).toFixed(3) + '%';
-    const fs  = 'clamp(7px,1.5vw,12px)';
+    const top  = (LINHA_TOPO + i * LINHA_H).toFixed(3) + '%';
+    const h    = (LINHA_H * 0.78).toFixed(3) + '%';
+    const fs   = 'clamp(6px,1.4vw,11px)';
 
-    const inp = (tipo, col, align, pholder) => {
+    const mk = (tipo, col, align, ph) => {
       const el = document.createElement('input');
       el.type = 'text';
       el.className = 'campo-item';
-      el.placeholder = pholder;
+      el.placeholder = ph;
       el.value = itens[i][tipo];
       el.style.cssText = `top:${top};left:${col.l};width:${col.w};height:${h};font-size:${fs};text-align:${align};`;
       el.addEventListener('input', function() {
@@ -315,9 +340,10 @@ function renderItens() {
       });
       return el;
     };
-    ov.appendChild(inp('desc',  COL_DESC,  'left',   ''));
-    ov.appendChild(inp('qtd',   COL_QTD,   'center', ''));
-    ov.appendChild(inp('valor', COL_VALOR, 'right',  ''));
+
+    ov.appendChild(mk('desc',  COL.desc,  'left',   ''));
+    ov.appendChild(mk('qtd',   COL.qtd,   'center', ''));
+    ov.appendChild(mk('valor', COL.valor, 'right',  ''));
   }
 }
 
@@ -325,28 +351,32 @@ function calcTotal() {
   let total = 0;
   itens.forEach(it => {
     const v = parseFloat(
-      (it.valor||'').replace(/R\$\s*/,'').replace(/\./g,'').replace(',','.')
+      (it.valor || '').replace(/R\$\s*/,'').replace(/\./g,'').replace(',','.')
     ) || 0;
     total += v;
   });
   const el = document.getElementById('totalDisplay');
-  if (total > 0) {
-    el.textContent = 'R$ ' + total.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  } else {
-    el.textContent = '';
-  }
+  el.textContent = total > 0
+    ? 'R$ ' + total.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    : '';
 }
 
-function renderTotalPos() {
-  const img = document.getElementById('modeloImg');
-  const el  = document.getElementById('totalDisplay');
-  if (!img.offsetHeight) return;
-  el.style.display  = '';
-  el.style.top      = (TOTAL_TOP  / 100 * img.offsetHeight) + 'px';
-  el.style.left     = (TOTAL_LEFT / 100 * img.offsetWidth)  + 'px';
-  el.style.width    = (TOTAL_W    / 100 * img.offsetWidth)  + 'px';
-  el.style.fontSize = Math.max(9, img.offsetWidth * 0.034)  + 'px';
-  el.style.lineHeight = (LINHA_H / 100 * img.offsetHeight)  + 'px';
+function posicionarTotal() {
+  const el = document.getElementById('totalDisplay');
+  el.style.cssText = `
+    display:block;
+    position:absolute;
+    top:${TOTAL_CSS.top};
+    left:${TOTAL_CSS.left};
+    width:${TOTAL_CSS.width};
+    font-size:clamp(8px,1.8vw,13px);
+    text-align:right;
+    color:#fff;
+    font-weight:700;
+    font-family:Arial,sans-serif;
+    line-height:${LINHA_H}%;
+    pointer-events:none;
+  `;
 }
 
 function limparTudo() {
@@ -362,33 +392,30 @@ function salvarLocal() {
   const d = {
     data:     document.getElementById('fData').value,
     cliente:  document.getElementById('fCliente').value,
+    endereco: document.getElementById('fEndereco').value,
+    cidade:   document.getElementById('fCidade').value,
     telefone: document.getElementById('fTelefone').value,
-    veiculo:  document.getElementById('fVeiculo').value,
-    ano:      document.getElementById('fAno').value,
-    placa:    document.getElementById('fPlaca').value,
     itens
   };
   try {
-    localStorage.setItem('fonsecar_v2', JSON.stringify(d));
-    toast('✅ Salvo!');
+    localStorage.setItem('fonsecar_v3', JSON.stringify(d));
+    toast('✅ Salvo com sucesso!');
   } catch(e) { toast('⚠️ Erro ao salvar'); }
 }
 
 function carregarLocal() {
   try {
-    const raw = localStorage.getItem('fonsecar_v2');
+    const raw = localStorage.getItem('fonsecar_v3');
     if (!raw) return;
     const d = JSON.parse(raw);
     if (d.data)     document.getElementById('fData').value     = d.data;
     if (d.cliente)  document.getElementById('fCliente').value  = d.cliente;
+    if (d.endereco) document.getElementById('fEndereco').value = d.endereco;
+    if (d.cidade)   document.getElementById('fCidade').value   = d.cidade;
     if (d.telefone) document.getElementById('fTelefone').value = d.telefone;
-    if (d.veiculo)  document.getElementById('fVeiculo').value  = d.veiculo;
-    if (d.ano)      document.getElementById('fAno').value      = d.ano;
-    if (d.placa)    document.getElementById('fPlaca').value    = d.placa;
     if (d.itens)    itens = d.itens;
     renderItens();
     calcTotal();
-    toast('📂 Orçamento carregado');
   } catch(e) {}
 }
 
@@ -407,7 +434,7 @@ async function compartilhar() {
     try {
       await navigator.clipboard.writeText(window.location.href);
       toast('🔗 Link copiado!');
-    } catch(e) { toast('Compartilhe o link do app'); }
+    } catch(e) { toast('Compartilhe o link manualmente'); }
   }
 }
 
