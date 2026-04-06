@@ -283,7 +283,7 @@
                         <h2>ORÇAMENTO</h2>
                         <div class="num-box">
                             <span class="num-label">Nº</span>
-                            <input class="line-input" id="num" style="color:white; font-weight:bold; width:110px" placeholder="PLACA-DDMM">
+                            <input class="line-input" id="num" style="color:white; font-weight:bold; width:110px" placeholder="PLACADDMMYY">
                         </div>
                     </div>
                     
@@ -394,16 +394,15 @@
         }
 
         function gerarNumero() {
-            const placa = document.getElementById('placa').value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-            const dataVal = document.getElementById('data').value;
-            let ddmm = '';
-            if (dataVal) {
-                const parts = dataVal.split('-');
-                ddmm = parts[2] + parts[1];
-            }
-            document.getElementById('num').value = (placa && ddmm) ? `${placa}-${ddmm}` : (placa || ddmm || '');
-        }
-
+    const placa = document.getElementById('placa').value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    const dataVal = document.getElementById('data').value;
+    let ddmmyy = '';
+    if (dataVal) {
+        const parts = dataVal.split('-');
+        ddmmyy = parts[2] + parts[1] + parts[0].substring(2);
+    }
+    document.getElementById('num').value = (placa && ddmmyy) ? `${placa}${ddmmyy}` : (placa || ddmmyy || '');
+}
         function addRow(desc='', qty='', val='') {
             const tbody = document.getElementById('itemsBody');
             const tr = document.createElement('tr');
