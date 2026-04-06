@@ -1,0 +1,22 @@
+{
+  "name": "Fonsecar - Orçamento",
+  "short_name": "Fonsecar",
+  "description": "App de orçamento da Fonsecar Auto Mecânica",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a0a00",
+  "theme_color": "#C84B00",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
