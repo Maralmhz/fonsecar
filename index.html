@@ -640,173 +640,310 @@ function newOrcamento() {
   showToast('Novo orçamento criado');
 }
 
-// ── PDF ──
+// ══════════════════════════════════════════
+// ── PDF PREMIUM ──
+// ══════════════════════════════════════════
 function gerarPDF() {
   const d = gatherData();
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
   const W = 210, H = 297;
-  const margin = 12;
-  const contentW = W - margin * 2;
+  const M = 14; // margem
+  const CW = W - M * 2; // largura do conteúdo
 
-  doc.setFillColor(245, 240, 232);
-  doc.rect(0, 0, W, H, 'F');
+  // ── Paleta ──
+  const OR  = [200, 75, 0];    // laranja principal
+  const ORD = [158, 58, 0];    // laranja escuro
+  const DK  = [26, 10, 0];     // preto quente
+  const CR  = [245, 240, 232]; // creme claro
+  const CRD = [237, 228, 212]; // creme escuro
+  const WH  = [255, 255, 255]; // branco
+  const ORP = [255, 220, 180]; // laranja pálido
+  const BD  = [200, 144, 96];  // borda
+  const RO  = [250, 246, 240]; // linha ímpar
+  const RE  = [240, 232, 218]; // linha par
 
-  doc.setFillColor(200, 75, 0);
-  doc.rect(0, 0, W, 52, 'F');
+  // ── Helpers ──
+  const fill  = (r,g,b) => doc.setFillColor(r,g,b);
+  const draw  = (r,g,b) => doc.setDrawColor(r,g,b);
+  const text  = (r,g,b) => doc.setTextColor(r,g,b);
+  const lw    = (n)     => doc.setLineWidth(n);
+  const fnt   = (s,w)   => doc.setFont('helvetica', w || 'normal');
+  const fsz   = (n)     => doc.setFontSize(n);
+  const box   = (x,y,w,h,s) => doc.rect(x,y,w,h, s||'F');
+  const ln    = (x1,y1,x2,y2) => doc.line(x1,y1,x2,y2);
 
-  doc.setFillColor(26, 10, 0);
-  doc.rect(0, 0, 60, 52, 'F');
+  // ── Ícone PIN (localização) ──
+  function iconPin(x, y, color) {
+    fill(...color); draw(...color); lw(0.1);
+    doc.circle(x, y, 1.4, 'F');
+    doc.triangle(x - 1.2, y + 0.3, x + 1.2, y + 0.3, x, y + 3.5, 'F');
+    fill(...WH);
+    doc.circle(x, y, 0.55, 'F');
+  }
 
+  // ── Ícone TELEFONE ──
+  function iconPhone(x, y, color) {
+    fill(...color); draw(...color); lw(0.1);
+    // Corpo do telefone
+    doc.roundedRect(x - 1.3, y - 3.2, 2.6, 6.4, 0.5, 0.5, 'F');
+    fill(...(color === WH ? DK : WH));
+    doc.roundedRect(x - 0.95, y - 2.5, 1.9, 4.3, 0.3, 0.3, 'F');
+    fill(...color);
+    doc.circle(x, y + 2.1, 0.4, 'F');
+  }
+
+  // ── Ícone CALENDÁRIO ──
+  function iconCalendar(x, y, color) {
+    fill(...color); draw(...color); lw(0.1);
+    doc.roundedRect(x - 2, y - 1.5, 4, 3.8, 0.3, 0.3, 'F');
+    fill(...(color === WH ? DK : WH));
+    box(x - 1.7, y - 0.3, 3.4, 2.8, 'F');
+    fill(...color);
+    ln(x - 0.8, y - 1.5, x - 0.8, y - 2.8); ln(x + 0.8, y - 1.5, x + 0.8, y - 2.8);
+    lw(0.3); draw(...color);
+    ln(x - 1.7, y + 0.2, x + 1.7, y + 0.2);
+  }
+
+  // ── Ícone PESSOA ──
+  function iconPerson(x, y, color) {
+    fill(...color);
+    doc.circle(x, y - 2, 1.2, 'F');
+    fill(...color);
+    doc.ellipse(x, y + 1.2, 1.8, 1.4, 'F');
+  }
+
+  // ── Ícone CARRO ──
+  function iconCar(x, y, color) {
+    fill(...color); draw(...color); lw(0.1);
+    // Corpo
+    doc.roundedRect(x - 3.5, y - 1.2, 7, 2.8, 0.4, 0.4, 'F');
+    // Cabine
+    fill(...color);
+    doc.roundedRect(x - 2.2, y - 3.0, 4.4, 2.1, 0.4, 0.4, 'F');
+    // Janelas
+    fill(...(color === WH ? DK : WH)); lw(0.1);
+    doc.roundedRect(x - 1.9, y - 2.8, 1.6, 1.4, 0.2, 0.2, 'F');
+    doc.roundedRect(x + 0.3, y - 2.8, 1.6, 1.4, 0.2, 0.2, 'F');
+    // Rodas
+    fill(...DK);
+    doc.circle(x - 2.1, y + 1.7, 1.05, 'F');
+    doc.circle(x + 2.1, y + 1.7, 1.05, 'F');
+    fill(...[180,180,180]);
+    doc.circle(x - 2.1, y + 1.7, 0.45, 'F');
+    doc.circle(x + 2.1, y + 1.7, 0.45, 'F');
+  }
+
+  // ── Ícone PLACA ──
+  function iconPlate(x, y, color) {
+    fill(...color); draw(...color); lw(0.2);
+    doc.roundedRect(x - 2.4, y - 1.2, 4.8, 2.4, 0.3, 0.3, 'F');
+    fill(...WH);
+    doc.roundedRect(x - 2.1, y - 0.9, 4.2, 1.8, 0.2, 0.2, 'F');
+  }
+
+  // ── FUNDO da página ──
+  fill(...CR); box(0, 0, W, H);
+
+  // ── BORDA externa ──
+  fill(...CR); draw(...OR); lw(0.8);
+  doc.rect(4, 4, W - 8, H - 8);
+
+  // ── FAIXA DECORATIVA topo (laranja escuro) ──
+  fill(...ORD); box(0, 0, W, 6);
+  // Faixa laranja principal
+  fill(...OR); box(0, 6, W, 54);
+
+  // ── COLUNA ESQUERDA DO CABEÇALHO (dark) ──
+  fill(...DK); box(0, 0, 62, 60);
+
+  // ── LOGO ──
   const logoImg = new Image();
   logoImg.src = 'logo.png';
   try {
-    doc.addImage(logoImg, 'PNG', 2, 2, 56, 48);
+    doc.addImage(logoImg, 'PNG', 2, 4, 58, 52);
   } catch(e) {
-    doc.setFillColor(200, 75, 0);
-    doc.rect(2, 4, 56, 14, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.text('FONSECAR', 30, 13.5, { align: 'center' });
+    // Fallback texto
+    text(...OR); fnt(null,'bold'); fsz(15);
+    doc.text('FONSECAR', 31, 22, { align: 'center' });
+    text(...ORP); fnt(null,'normal'); fsz(7);
+    doc.text('AUTO MECANICA', 31, 29, { align: 'center' });
   }
 
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(30);
-  doc.text('ORÇAMENTO', 130, 22, { align: 'center' });
+  // ── TÍTULO ORÇAMENTO ──
+  text(...WH); fnt(null,'bold'); fsz(28);
+  doc.text('ORCAMENTO', 136, 26, { align: 'center' });
 
-  doc.setFontSize(10);
-  doc.setTextColor(255, 220, 180);
-  doc.text('Nº ' + (d.num || '----'), 130, 32, { align: 'center' });
+  // Número com destaque
+  // Badge pill
+  fill(...ORD); doc.roundedRect(100, 29, 72, 8, 4, 4, 'F');
+  text(...ORP); fnt(null,'bold'); fsz(8.5);
+  doc.text('No ' + (d.num || '----'), 136, 34.5, { align: 'center' });
 
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  const infoY = 40;
-  doc.text('DATA:', 63, infoY);
-  doc.text('CLIENTE:', 63, infoY + 7);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  const dataStr = d.data ? new Date(d.data + 'T12:00:00').toLocaleDateString('pt-BR') : '';
-  doc.text(dataStr, 82, infoY);
-  doc.text(d.cliente || '', 82, infoY + 7);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  doc.text('TELEFONE:', 150, infoY);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  doc.text(d.telefone || '', 170, infoY);
+  // ── CAMPOS: DATA e CLIENTE (na faixa laranja) ──
+  const cy = 45;
+  // Data
+  iconCalendar(67, cy - 1, WH);
+  text(...ORP); fnt(null,'bold'); fsz(6.5);
+  doc.text('DATA', 72, cy - 3.5);
+  text(...WH); fnt(null,'normal'); fsz(9);
+  const dataStr = d.data ? new Date(d.data + 'T12:00:00').toLocaleDateString('pt-BR') : '---';
+  doc.text(dataStr, 72, cy + 1.5);
 
-  doc.setFillColor(255, 255, 255);
-  doc.rect(0, 52, W, 12, 'F');
-  doc.setDrawColor(200, 75, 0);
-  doc.setLineWidth(0.5);
-  doc.line(0, 64, W, 64);
+  // Divisor vertical
+  draw(...[255,140,60]); lw(0.4);
+  ln(112, cy - 6, 112, cy + 4);
 
-  doc.setTextColor(158, 58, 0);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  doc.text('VEÍCULO:', margin, 59.5);
-  doc.setTextColor(26, 10, 0);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  doc.text(d.veiculo || '', margin + 22, 59.5);
-  doc.setTextColor(158, 58, 0);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  doc.text('ANO:', 120, 59.5);
-  doc.setTextColor(26, 10, 0);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  doc.text(d.ano || '', 133, 59.5);
-  doc.setTextColor(158, 58, 0);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  doc.text('PLACA:', 155, 59.5);
-  doc.setTextColor(26, 10, 0);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  doc.text((d.placa || '').toUpperCase(), 170, 59.5);
+  // Cliente
+  iconPerson(116, cy - 1, WH);
+  text(...ORP); fnt(null,'bold'); fsz(6.5);
+  doc.text('CLIENTE', 121, cy - 3.5);
+  text(...WH); fnt(null,'normal'); fsz(9);
+  doc.text(doc.splitTextToSize(d.cliente || '---', 55)[0], 121, cy + 1.5);
 
-  const tableTop = 66;
-  const colX = [margin, margin + 12, margin + 12 + 112, margin + 12 + 112 + 30];
-  const colW = [12, 112, 30, 34];
+  // Divisor vertical
+  draw(...[255,140,60]); lw(0.4);
+  ln(178, cy - 6, 178, cy + 4);
 
-  doc.setFillColor(200, 75, 0);
-  doc.rect(margin, tableTop, contentW, 8, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  doc.text('#', colX[0] + 6, tableTop + 5.2, { align: 'center' });
-  doc.text('DESCRIÇÃO DO SERVIÇO / PEÇA', colX[1] + 56, tableTop + 5.2, { align: 'center' });
-  doc.text('QTD', colX[2] + 15, tableTop + 5.2, { align: 'center' });
-  doc.text('VALOR (R$)', colX[3] + 17, tableTop + 5.2, { align: 'center' });
+  // Telefone
+  iconPhone(181, cy - 1, WH);
+  text(...ORP); fnt(null,'bold'); fsz(6.5);
+  doc.text('FONE', 185, cy - 3.5);
+  text(...WH); fnt(null,'normal'); fsz(8.5);
+  doc.text(d.telefone || '---', 185, cy + 1.5);
 
-  const rowH = 8;
-  let y = tableTop + 8;
-  const visibleItems = (d.items || []).filter((it, i) => it.desc || it.val || i < 15);
-  const displayItems = visibleItems.length > 0 ? visibleItems : Array(15).fill({});
+  // ── SEPARADOR LARANJA / CREME ──
+  fill(...OR); box(0, 60, W, 3);
+
+  // ── FAIXA DO VEÍCULO ──
+  fill(...WH); box(0, 63, W, 14);
+  draw(...BD); lw(0.3);
+  ln(0, 77, W, 77);
+
+  const vy = 72;
+  // Ícone carro
+  iconCar(M + 5, vy + 1, OR);
+  text(...ORD); fnt(null,'bold'); fsz(6.5);
+  doc.text('VEICULO', M + 13, vy - 2);
+  text(...DK); fnt(null,'normal'); fsz(9.5);
+  doc.text(d.veiculo || '---', M + 13, vy + 3);
+
+  draw(...BD); lw(0.3); ln(110, 64, 110, 77);
+
+  // Ano
+  text(...ORD); fnt(null,'bold'); fsz(6.5);
+  doc.text('ANO', 114, vy - 2);
+  text(...DK); fnt(null,'normal'); fsz(9.5);
+  doc.text(d.ano || '---', 114, vy + 3);
+
+  draw(...BD); lw(0.3); ln(140, 64, 140, 77);
+
+  // Placa com ícone
+  iconPlate(145, vy, OR);
+  text(...ORD); fnt(null,'bold'); fsz(6.5);
+  doc.text('PLACA', 152, vy - 2);
+  text(...DK); fnt(null,'bold'); fsz(10);
+  doc.text((d.placa || '---').toUpperCase(), 152, vy + 3);
+
+  // ── TABELA DE ITENS ──
+  const TT = 79; // table top
+  const colX = [M, M + 13, M + 13 + 112, M + 13 + 112 + 28];
+  const colW = [13, 112, 28, CW - 13 - 112 - 28];
+  const RH = 7.5; // row height
+
+  // Cabeçalho da tabela
+  fill(...DK); box(M, TT, CW, 8);
+  // Linha laranja fina embaixo do header
+  fill(...OR); box(M, TT + 8, CW, 0.8);
+
+  text(...ORP); fnt(null,'bold'); fsz(7);
+  doc.text('#',          colX[0] + 6.5, TT + 5.3, { align: 'center' });
+  text(...WH); fsz(7);
+  doc.text('DESCRICAO DO SERVICO / PECA', colX[1] + 56, TT + 5.3, { align: 'center' });
+  doc.text('QTD',        colX[2] + 14,  TT + 5.3, { align: 'center' });
+  doc.text('VALOR (R$)', colX[3] + colW[3] / 2, TT + 5.3, { align: 'center' });
+
+  // Separadores verticais no header
+  draw(...OR); lw(0.4);
+  ln(colX[1], TT, colX[1], TT + 8);
+  ln(colX[2], TT, colX[2], TT + 8);
+  ln(colX[3], TT, colX[3], TT + 8);
+
+  let y = TT + 8.8;
+  const visibleItems = (d.items || []).filter((it, i) => it.desc || it.val || i < 14);
+  const displayItems = visibleItems.length > 0 ? visibleItems : Array(14).fill({});
 
   displayItems.forEach((item, i) => {
-    const bg = i % 2 === 0 ? [250, 246, 240] : [240, 232, 218];
-    doc.setFillColor(...bg);
-    doc.rect(margin, y, contentW, rowH, 'F');
-    doc.setDrawColor(200, 144, 96);
-    doc.setLineWidth(0.3);
-    doc.line(margin, y + rowH, margin + contentW, y + rowH);
-    doc.line(colX[1], y, colX[1], y + rowH);
-    doc.line(colX[2], y, colX[2], y + rowH);
-    doc.line(colX[3], y, colX[3], y + rowH);
-    doc.setTextColor(158, 58, 0);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8);
-    doc.text(String(i + 1).padStart(2, '0'), colX[0] + 6, y + 5.2, { align: 'center' });
-    doc.setTextColor(26, 10, 0);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    if (item.desc) doc.text(String(item.desc), colX[1] + 2, y + 5.2);
+    const bg = i % 2 === 0 ? RO : RE;
+    fill(...bg); box(M, y, CW, RH);
+
+    // Separador inferior da linha
+    draw(...BD); lw(0.2);
+    ln(M, y + RH, M + CW, y + RH);
+    // Separadores colunas
+    draw(...BD); lw(0.15);
+    ln(colX[1], y, colX[1], y + RH);
+    ln(colX[2], y, colX[2], y + RH);
+    ln(colX[3], y, colX[3], y + RH);
+
+    // Número
+    // Badge do número
+    fill(...(i % 2 === 0 ? CRD : [225, 215, 198]));
+    doc.roundedRect(colX[0] + 1.5, y + 1.5, 10, 4.5, 1, 1, 'F');
+    text(...ORD); fnt(null,'bold'); fsz(7.5);
+    doc.text(String(i + 1).padStart(2, '0'), colX[0] + 6.5, y + 5, { align: 'center' });
+
+    text(...DK); fnt(null,'normal'); fsz(8.5);
+    if (item.desc) {
+      const descLines = doc.splitTextToSize(String(item.desc), colW[1] - 4);
+      doc.text(descLines[0], colX[1] + 2, y + 5);
+    }
     if (item.qty && item.qty !== '1' && item.qty !== '') {
-      doc.text(String(item.qty), colX[2] + 15, y + 5.2, { align: 'center' });
+      text(...ORD); fnt(null,'bold'); fsz(8.5);
+      doc.text(String(item.qty), colX[2] + 14, y + 5, { align: 'center' });
     }
     if (item.val) {
       const qty = parseFloat((item.qty || '1').replace(',', '.')) || 1;
       const val = parseFloat((item.val || '0').replace(',', '.')) || 0;
       const subtotal = qty * val;
       const valStr = subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-      doc.text(valStr, colX[3] + colW[3] - 3, y + 5.2, { align: 'right' });
+      text(...DK); fnt(null,'bold'); fsz(8.5);
+      doc.text(valStr, colX[3] + colW[3] - 3, y + 5, { align: 'right' });
     }
-    y += rowH;
+    y += RH;
   });
 
+  // Borda da tabela
+  draw(...ORD); lw(0.4);
+  doc.rect(M, TT, CW, y - TT);
+
+  // ── OBS ──
   if (d.obs) {
-    y += 2;
-    doc.setFillColor(255, 255, 255);
-    doc.rect(margin, y, contentW, 16, 'F');
-    doc.setDrawColor(200, 144, 96);
-    doc.setLineWidth(0.3);
-    doc.rect(margin, y, contentW, 16);
-    doc.setTextColor(158, 58, 0);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(7);
-    doc.text('OBSERVAÇÕES:', margin + 2, y + 5);
-    doc.setTextColor(26, 10, 0);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    const obsLines = doc.splitTextToSize(d.obs, contentW - 6);
-    doc.text(obsLines.slice(0, 2), margin + 2, y + 10);
-    y += 18;
+    y += 3;
+    fill(...WH); box(M, y, CW, 18);
+    draw(...BD); lw(0.3);
+    // Borda pontilhada simulada com rect
+    doc.setLineDash([1.5, 1.5]);
+    doc.rect(M, y, CW, 18);
+    doc.setLineDash([]);
+    // Label
+    fill(...OR); box(M, y, 28, 5.5);
+    text(...WH); fnt(null,'bold'); fsz(6.5);
+    doc.text('OBSERVACOES', M + 14, y + 3.8, { align: 'center' });
+    text(...DK); fnt(null,'normal'); fsz(8);
+    const obsLines = doc.splitTextToSize(d.obs, CW - 6);
+    obsLines.slice(0, 2).forEach((l, li) => doc.text(l, M + 2, y + 9 + li * 5));
+    y += 21;
   }
 
-  // TOTAL
-  y += 2;
-  doc.setFillColor(200, 75, 0);
-  doc.rect(margin, y, contentW, 11, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(12);
-  doc.text('TOTAL', margin + 10, y + 7.5);
+  // ── TOTAL ──
+  y += 3;
+  // Fundo escuro
+  fill(...DK); box(M, y, CW, 13);
+  // Faixa laranja na esquerda
+  fill(...OR); box(M, y, 4, 13);
+
   let total = 0;
   (d.items || []).forEach(item => {
     const qty = parseFloat((item.qty || '1').replace(',', '.')) || 1;
@@ -814,65 +951,73 @@ function gerarPDF() {
     total += qty * val;
   });
   const totalStr = 'R$ ' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-  doc.setFontSize(14);
-  doc.text(totalStr, margin + contentW - 4, y + 7.5, { align: 'right' });
-  y += 13;
 
-  // VALIDADE
+  text(...ORP); fnt(null,'bold'); fsz(9);
+  doc.text('TOTAL GERAL', M + 8, y + 5.5);
+  text(...WH); fnt(null,'bold'); fsz(7);
+  doc.text('DO ORCAMENTO', M + 8, y + 10.5);
+  text(...WH); fnt(null,'bold'); fsz(15);
+  doc.text(totalStr, M + CW - 4, y + 9.5, { align: 'right' });
+  y += 16;
+
+  // ── VALIDADE ──
   const venc = calcVencimento(d.data);
   const emissaoStr = d.data ? formatarData(new Date(d.data + 'T12:00:00')) : '...';
   const vencStr = venc ? formatarData(venc) : '...';
 
-  doc.setFillColor(237, 228, 212);
-  doc.rect(margin, y, contentW, 22, 'F');
-  doc.setDrawColor(200, 144, 96);
-  doc.setLineWidth(0.4);
-  doc.setLineDash([2, 2]);
-  doc.rect(margin, y, contentW, 22);
+  y += 2;
+  fill(...CRD); box(M, y, CW, 26);
+  // Borda dashed laranja
+  draw(...OR); lw(0.5);
+  doc.setLineDash([2, 1.5]);
+  doc.rect(M, y, CW, 26);
   doc.setLineDash([]);
+  // Faixa colorida no topo do bloco
+  fill(...OR); box(M, y, CW, 5);
+  text(...WH); fnt(null,'bold'); fsz(7);
+  doc.text('! ATENCAO — VALIDADE DO ORCAMENTO', M + CW / 2, y + 3.5, { align: 'center' });
 
-  doc.setTextColor(158, 58, 0);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  doc.text('ATENCAO:', margin + 3, y + 6);
-  doc.setTextColor(26, 10, 0);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
+  text(...ORD); fnt(null,'bold'); fsz(8.5);
   doc.text(
-    `Este orcamento e valido por 15 dias (${emissaoStr}), vencendo em ${vencStr}.`,
-    margin + 3, y + 12
+    'Este orcamento e valido por 15 dias (' + emissaoStr + '), vencendo em ' + vencStr + '.',
+    M + 4, y + 11
   );
+  text(...DK); fnt(null,'normal'); fsz(7.8);
   const linha2 = doc.splitTextToSize(
-    'Apos aprovacao, podem ocorrer complementos de orcamento durante a desmontagem, '
-    + 'situacao em que o cliente sera previamente comunicado para nova autorizacao.',
-    contentW - 6
+    'Apos aprovacao, podem ocorrer complementos de orcamento durante a desmontagem, situacao em que o cliente sera previamente comunicado para nova autorizacao.',
+    CW - 8
   );
-  doc.text(linha2[0] || '', margin + 3, y + 18);
-  if (linha2[1]) doc.text(linha2[1], margin + 3, y + 22.5);
-  y += 25;
+  doc.text(linha2[0] || '', M + 4, y + 17.5);
+  if (linha2[1]) doc.text(linha2[1], M + 4, y + 23);
+  y += 30;
 
-  // RODAPÉ
-  const footerY = H - 32;
-  doc.setFillColor(26, 10, 0);
-  doc.rect(0, footerY, W, 32, 'F');
-  doc.setTextColor(245, 240, 232);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8.5);
-  doc.text('Rua Maranhão, 13, Bairro Industrial - Contagem, MG', margin, footerY + 8);
-  doc.text('CEP: 32.230-440   |   CNPJ: 48.549.990/0001-48', margin, footerY + 15);
-  doc.setFillColor(200, 75, 0);
-  doc.rect(0, footerY + 20, W, 12, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(13);
-  doc.text('31 99273-0811', margin, footerY + 28);
+  // ── RODAPÉ ──
+  const FY = H - 30;
+  fill(...DK); box(0, FY, W, 30);
+  // Linha laranja superior do footer
+  fill(...OR); box(0, FY, W, 2);
 
-  doc.setDrawColor(200, 75, 0);
-  doc.setLineWidth(1.5);
-  doc.rect(3, 3, W - 6, H - 6);
+  // Ícone pin
+  iconPin(M + 3, FY + 12, OR);
+  text(...CR); fnt(null,'normal'); fsz(8);
+  doc.text('Rua Maranho, 13, Bairro Industrial — Contagem, MG', M + 8, FY + 12);
 
+  // Ícone calendário como ID/CNPJ
+  iconCalendar(M + 3, FY + 20, BD);
+  text(...[180, 160, 140]); fnt(null,'normal'); fsz(7.5);
+  doc.text('CEP: 32.230-440   |   CNPJ: 48.549.990/0001-48', M + 8, FY + 20.5);
+
+  // Faixa laranja no rodapé com telefone
+  fill(...OR); box(0, FY + 22, W, 8);
+  iconPhone(M + 3, FY + 25.5, WH);
+  text(...WH); fnt(null,'bold'); fsz(11);
+  doc.text('31 99273-0811', M + 9, FY + 27.5);
+  text(...ORP); fnt(null,'normal'); fsz(7.5);
+  doc.text('AUTO MECANICA FONSECAR', W - M, FY + 27.5, { align: 'right' });
+
+  // ── Nome do arquivo ──
   const numSafe = (d.num || 'orcamento').replace(/[^a-zA-Z0-9]/g, '_');
-  const clienteNome = (d.cliente || 'cliente').replace(/\s+/g, '_').toLowerCase();
+  const clienteNome = (d.cliente || 'cliente').replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
   doc.save(`fonsecar_${numSafe}_${clienteNome}.pdf`);
 
   showToast('✓ PDF gerado com sucesso!');
