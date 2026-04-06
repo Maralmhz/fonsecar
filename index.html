@@ -18,12 +18,9 @@
             --orange: #C84B00;
             --orange-dark: #9e3a00;
             --orange-light: #e85d00;
-            --orange-pale: #f4a96a;
             --cream: #f5f0e8;
-            --cream-dark: #ede4d4;
             --dark: #1a0a00;
             --dark2: #2d1200;
-            --gray: #6b5c4e;
             --white: #ffffff;
             --border: #c89060;
             --row-odd: #faf6f0;
@@ -31,7 +28,7 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        
+
         html, body {
             min-height: 100vh;
             background: var(--dark);
@@ -40,227 +37,365 @@
             overscroll-behavior: none;
         }
 
+        /* ── LAYOUT PRINCIPAL ── */
+        main {
+            padding: 0 0 90px 0;
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        .doc {
+            background: var(--cream);
+            margin: 12px 8px;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.45);
+            border: 1px solid var(--border);
+        }
+
+        .top-decor {
+            height: 5px;
+            background: var(--orange);
+        }
+
+        /* ── HEADER ── */
         .doc-header {
             background: var(--white);
             display: flex;
-            align-items: stretch;
-            padding: 20px 25px;
-            gap: 20px;
+            align-items: flex-start;
+            padding: 14px 14px 10px;
+            gap: 12px;
         }
 
         .header-logo-side {
-            flex: 0 0 160px;
+            flex: 0 0 90px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .header-logo-side img {
-            width: 100%;
-            height: auto;
-            max-height: 120px;
+            width: 90px;
+            height: 70px;
             object-fit: contain;
         }
 
         .header-content-side {
             flex: 1;
+            min-width: 0;
             display: flex;
             flex-direction: column;
+            gap: 8px;
         }
 
         .orcamento-banner {
             background: var(--orange);
             color: white;
-            padding: 8px 15px;
+            padding: 6px 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
             border-radius: 2px;
         }
 
         .orcamento-banner h2 {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 32px;
-            letter-spacing: 4px;
+            font-size: 24px;
+            letter-spacing: 3px;
             line-height: 1;
         }
 
         .num-box {
             display: flex;
             align-items: baseline;
-            gap: 8px;
+            gap: 4px;
         }
 
         .num-label {
             font-family: 'Oswald', sans-serif;
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
         }
 
-        .header-main-fields {
+        #num {
+            color: white !important;
+            font-weight: bold;
+            width: 90px;
+            font-size: 11px;
+        }
+
+        /* Campos do header em coluna única no mobile */
+        .header-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .fields-row {
             display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 10px 20px;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
         }
 
         .line-field {
             display: flex;
             align-items: baseline;
-            gap: 8px;
-            border-bottom: 1px solid #ddd;
+            gap: 5px;
+            border-bottom: 1px solid #e0d8cc;
             padding-bottom: 2px;
         }
 
         .line-label {
             font-family: 'Oswald', sans-serif;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             color: var(--orange-dark);
             text-transform: uppercase;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .line-input {
             border: none;
             background: transparent;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 13px;
+            font-size: 12px;
             color: var(--dark);
             width: 100%;
+            min-width: 0;
             outline: none;
+            padding: 0;
         }
 
+        /* ── VEÍCULO ── */
         .vehicle-row {
             background: #fff;
-            padding: 0 25px 20px;
+            padding: 8px 14px 12px;
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
         }
 
-        main {
-            padding: 0 0 100px 0;
-            max-width: 750px;
-            margin-left: auto;
-            margin-right: auto;
+        .vehicle-row .veiculo-field {
+            grid-column: span 2;
         }
 
-        .doc {
-            background: var(--cream);
-            margin: 20px 10px;
-            border-radius: 4px;
-            overflow: hidden;
-            box-shadow: 0 10px 50px rgba(0,0,0,0.4);
-            border: 1px solid var(--border);
-        }
-
-        .top-decor {
-            height: 6px;
-            background: var(--orange);
-        }
-
+        /* ── TABELA ── */
         .items-table { width: 100%; border-collapse: collapse; }
         .items-table thead tr { background: #333; }
         .items-table thead th {
             font-family: 'Oswald', sans-serif;
             font-weight: 700;
-            font-size: 11px;
+            font-size: 10px;
             color: white;
-            padding: 10px;
+            padding: 8px 6px;
             text-align: left;
             text-transform: uppercase;
+            white-space: nowrap;
         }
+        .items-table thead th:first-child { text-align: center; }
+        .items-table thead th:last-child { text-align: right; }
 
         .item-row td { border-bottom: 1px solid var(--border); padding: 0; }
         .item-row:nth-child(odd) td { background: var(--row-odd); }
         .item-row:nth-child(even) td { background: var(--row-even); }
 
-        .item-row .num { 
-            font-family: 'Oswald', sans-serif; 
-            font-weight: 600; 
-            font-size: 11px; 
+        .item-row .num {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
             text-align: center;
-            color: #888;
+            color: #999;
+            width: 30px;
         }
 
         .item-row input {
             border: none; background: transparent;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 13px; color: var(--dark);
-            width: 100%; outline: none; padding: 10px;
+            font-size: 12px; color: var(--dark);
+            width: 100%; outline: none;
+            padding: 9px 6px;
         }
 
+        /* Colunas da tabela */
+        .col-num  { width: 30px; }
+        .col-desc { }
+        .col-qty  { width: 44px; }
+        .col-val  { width: 90px; }
+
+        /* ── TOTAL ── */
         .total-row {
             background: var(--orange) !important;
-            padding: 15px 25px;
+            padding: 12px 14px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 6px;
             color: white;
         }
 
-        .total-label { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; }
-        .total-value { font-family: 'Bebas Neue', sans-serif; font-size: 28px; }
+        .total-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
+        .total-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+
+        .total-value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 26px;
+            line-height: 1;
+        }
+
+        .pacote-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        #labelPacote {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            opacity: 0.9;
+        }
+
+        #chkPacote {
+            width: 15px; height: 15px;
+            cursor: pointer;
+            accent-color: white;
+        }
+
+        #inputPacote {
+            display: none;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            color: white;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255,255,255,0.6);
+            outline: none;
+            width: 140px;
+            text-align: right;
+        }
+
+        /* ── VALIDADE ── */
         .validade-block {
             background: #fff9f0;
             border-top: 1px dashed var(--border);
-            padding: 15px 25px;
-            font-size: 12px;
+            padding: 12px 14px;
+            font-size: 11px;
             line-height: 1.6;
             color: #555;
         }
 
         .validade-block strong { color: var(--orange-dark); font-family: 'Oswald', sans-serif; }
 
+        /* ── FOOTER ── */
         .doc-footer {
             background: #222;
             color: #ccc;
-            padding: 20px 25px;
-            font-size: 11px;
+            padding: 14px;
+            font-size: 10px;
         }
 
         .footer-grid {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
+            gap: 8px;
         }
 
         .footer-brand {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 24px;
+            font-size: 20px;
             color: var(--orange);
             letter-spacing: 2px;
         }
 
+        /* ── ACTION BAR ── */
         .action-bar {
             position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
             width: 100%; max-width: 750px;
             background: var(--dark2); border-top: 3px solid var(--orange);
-            padding: 12px 20px; display: flex; gap: 12px; z-index: 1000;
+            padding: 10px 14px; display: flex; gap: 10px; z-index: 1000;
         }
 
         .btn {
             flex: 1; border: none; border-radius: 4px;
             font-family: 'Oswald', sans-serif; font-weight: 700;
-            text-transform: uppercase; padding: 14px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            text-transform: uppercase; padding: 13px 8px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 14px;
         }
 
-        .btn-pdf { background: var(--orange); color: white; flex: 2; font-size: 16px; }
-        .btn-new { background: #444; color: #fff; flex: 0.8; font-size: 12px; }
+        .btn-pdf { background: var(--orange); color: white; flex: 2; }
+        .btn-new { background: #444; color: #fff; flex: 0.7; font-size: 12px; }
 
         .toast {
-            position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%);
-            background: #333; color: #fff; padding: 10px 20px; border-radius: 30px;
-            font-family: 'Oswald', sans-serif; opacity: 0; transition: 0.3s; z-index: 2000;
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+            background: #333; color: #fff; padding: 9px 18px; border-radius: 30px;
+            font-family: 'Oswald', sans-serif; font-size: 13px;
+            opacity: 0; transition: 0.3s; z-index: 2000;
+            white-space: nowrap;
         }
         .toast.show { opacity: 1; }
 
+        /* ── DESKTOP (≥520px) ── */
+        @media (min-width: 520px) {
+            .doc { margin: 20px 12px; }
+
+            .doc-header { padding: 18px 20px 14px; gap: 18px; }
+
+            .header-logo-side { flex: 0 0 130px; }
+            .header-logo-side img { width: 130px; height: 100px; }
+
+            .orcamento-banner h2 { font-size: 30px; }
+            #num { width: 110px; font-size: 13px; }
+
+            .fields-row { grid-template-columns: 1fr 1fr; }
+
+            .line-label { font-size: 11px; }
+            .line-input { font-size: 13px; }
+
+            .vehicle-row {
+                padding: 0 20px 16px;
+                grid-template-columns: 2fr 1fr 1fr;
+            }
+            .vehicle-row .veiculo-field { grid-column: span 1; }
+
+            .items-table thead th { font-size: 11px; padding: 10px 8px; }
+            .item-row input { font-size: 13px; padding: 10px 8px; }
+            .col-qty { width: 60px; }
+            .col-val { width: 110px; }
+
+            .total-row { flex-direction: row; align-items: center; padding: 14px 20px; }
+            .total-top { flex: 1; }
+            .total-label { font-size: 20px; }
+            .total-value { font-size: 28px; }
+            .pacote-row { flex-direction: row; }
+
+            .validade-block { padding: 14px 20px; font-size: 12px; }
+            .doc-footer { padding: 18px 20px; font-size: 11px; }
+            .footer-brand { font-size: 22px; }
+
+            .action-bar { padding: 12px 20px; }
+            .btn { font-size: 15px; padding: 14px; }
+        }
+
         @media print {
-            .action-bar, .topbar, .btn-new { display: none !important; }
+            .action-bar { display: none !important; }
             body { background: white; }
             .doc { margin: 0; box-shadow: none; border: none; }
         }
@@ -271,39 +406,41 @@
     <main>
         <div class="doc">
             <div class="top-decor"></div>
-            
+
             <header class="doc-header">
                 <div class="header-logo-side">
-                    <img src="logo.png" alt="Fonsecar">
+                    <img src="logo.png" alt="Fonsecar" loading="lazy">
                 </div>
                 <div class="header-content-side">
                     <div class="orcamento-banner">
                         <h2>ORÇAMENTO</h2>
                         <div class="num-box">
                             <span class="num-label">Nº</span>
-                            <input class="line-input" id="num" style="color:white; font-weight:bold; width:110px" placeholder="PLACADDMMYY">
+                            <input class="line-input" id="num" placeholder="PLACA+DATA">
                         </div>
                     </div>
-                    
-                    <div class="header-main-fields">
-                        <div class="line-field" style="grid-column: span 2">
+
+                    <div class="header-fields">
+                        <div class="line-field">
                             <span class="line-label">Cliente:</span>
                             <input class="line-input" id="cliente" placeholder="Nome do cliente">
                         </div>
-                        <div class="line-field">
-                            <span class="line-label">Data:</span>
-                            <input class="line-input" id="data" type="date" oninput="gerarNumero(); atualizarValidade();">
-                        </div>
-                        <div class="line-field">
-                            <span class="line-label">Telefone:</span>
-                            <input class="line-input" id="telefone" placeholder="(00) 00000-0000">
+                        <div class="fields-row">
+                            <div class="line-field">
+                                <span class="line-label">Data:</span>
+                                <input class="line-input" id="data" type="date" oninput="gerarNumero(); atualizarValidade();">
+                            </div>
+                            <div class="line-field">
+                                <span class="line-label">Fone:</span>
+                                <input class="line-input" id="telefone" placeholder="(00) 00000-0000">
+                            </div>
                         </div>
                     </div>
                 </div>
             </header>
 
             <div class="vehicle-row">
-                <div class="line-field">
+                <div class="line-field veiculo-field">
                     <span class="line-label">Veículo:</span>
                     <input class="line-input" id="veiculo" placeholder="Ex: Honda Civic">
                 </div>
@@ -320,42 +457,40 @@
             <table class="items-table">
                 <thead>
                     <tr>
-                        <th style="width:40px; text-align:center">#</th>
+                        <th class="col-num">#</th>
                         <th>Descrição do Serviço / Peça</th>
-                        <th style="width:60px; text-align:center">Qtd</th>
-                        <th style="width:110px; text-align:right">Valor (R$)</th>
+                        <th class="col-qty" style="text-align:center">Qtd</th>
+                        <th class="col-val" style="text-align:right">Valor (R$)</th>
                     </tr>
                 </thead>
                 <tbody id="itemsBody"></tbody>
             </table>
 
-            <div class="total-row" style="flex-wrap:wrap; gap:10px;">
-                <span class="total-label">TOTAL DO ORÇAMENTO</span>
-                <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:flex-end;">
-                    <label id="labelPacote" style="display:flex; align-items:center; gap:6px; font-family:'Oswald',sans-serif; font-size:12px; font-weight:600; letter-spacing:1px; cursor:pointer; opacity:0.85;">
-                        <input type="checkbox" id="chkPacote" onchange="togglePacote(this.checked)" style="width:16px;height:16px;cursor:pointer;accent-color:#fff;">
+            <div class="total-row">
+                <div class="total-top">
+                    <span class="total-label">TOTAL</span>
+                    <span class="total-value" id="totalDisplay">R$ 0,00</span>
+                    <input id="inputPacote" type="text" placeholder="Ex: 1.500,00" oninput="atualizarPacote(this.value)">
+                </div>
+                <div class="pacote-row">
+                    <label id="labelPacote">
+                        <input type="checkbox" id="chkPacote" onchange="togglePacote(this.checked)">
                         PACOTE FECHADO
                     </label>
-                    <span class="total-value" id="totalDisplay">R$ 0,00</span>
-                    <input id="inputPacote" type="text" placeholder="Ex: 1.500,00"
-                        style="display:none; font-family:'Bebas Neue',sans-serif; font-size:26px; color:white; background:transparent; border:none; border-bottom:2px solid rgba(255,255,255,0.6); outline:none; width:160px; text-align:right;"
-                        oninput="atualizarPacote(this.value)">
                 </div>
             </div>
 
-            <div class="validade-block" id="validadeTexto">
-                <!-- Preenchido via JS -->
-            </div>
+            <div class="validade-block" id="validadeTexto"></div>
 
             <div class="doc-footer">
                 <div class="footer-grid">
                     <div>
-                        <p>Rua Maranhão, 13, Bairro Industrial — Contagem, MG</p>
-                        <p>CEP: 32.230-440 | CNPJ: 48.549.990/0001-48</p>
+                        <p>Rua Maranhão, 13, Bairro Industrial</p>
+                        <p>Contagem, MG — CNPJ: 48.549.990/0001-48</p>
                     </div>
                     <div style="text-align:right">
                         <div class="footer-brand">FONSECAR</div>
-                        <p style="color:var(--orange); font-weight:bold; font-size:16px">31 99273-0811</p>
+                        <p style="color:var(--orange); font-weight:bold; font-size:14px">31 99273-0811</p>
                     </div>
                 </div>
             </div>
@@ -364,7 +499,7 @@
 
     <div class="action-bar">
         <button class="btn btn-new" onclick="newOrcamento()">Novo</button>
-        <button class="btn btn-pdf" onclick="gerarPDF()">Gerar PDF</button>
+        <button class="btn btn-pdf" onclick="gerarPDF()">⬇ Gerar PDF</button>
     </div>
 
     <div id="toast" class="toast"></div>
@@ -393,8 +528,8 @@
             const emissao = new Date(dataVal + 'T12:00:00');
             const venc = calcVencimento(dataVal);
             div.innerHTML = `
-                <strong>ATENÇÃO:</strong> Este orçamento é válido por 15 dias (${formatarData(emissao)}), vencendo em <strong>${formatarData(venc)}</strong>.<br><br>
-                Após aprovação, podem ocorrer complementos de orçamento durante a desmontagem, situação em que o cliente será previamente comunicado para nova autorização.
+                <strong>ATENÇÃO:</strong> Orçamento válido por 15 dias (${formatarData(emissao)}), vencendo em <strong>${formatarData(venc)}</strong>.<br>
+                Após aprovação, podem ocorrer complementos durante a desmontagem, situação em que o cliente será previamente comunicado.
             `;
         }
 
@@ -415,21 +550,19 @@
             tr.className = 'item-row';
             const idx = rows.length + 1;
             tr.innerHTML = `
-                <td class="num">${String(idx).padStart(2,'0')}</td>
+                <td class="num col-num">${String(idx).padStart(2,'0')}</td>
                 <td><input class="inp-desc" value="${desc}" oninput="calcTotal()"></td>
-                <td><input class="inp-qty" value="${qty}" style="text-align:center" oninput="calcTotal()"></td>
-                <td><input class="inp-val" value="${val}" style="text-align:right" oninput="calcTotal()"></td>
+                <td class="col-qty"><input class="inp-qty" value="${qty}" style="text-align:center" oninput="calcTotal()"></td>
+                <td class="col-val"><input class="inp-val" value="${val}" style="text-align:right" oninput="calcTotal()"></td>
             `;
             tbody.appendChild(tr);
             rows.push(tr);
         }
 
-        // Converte valor BR: 1.500,00 | 1500,00 | 1500.00 -> número
         function parseBR(str) {
             if (!str) return 0;
             str = str.trim();
             if (str.includes(',')) {
-                // formato BR: remove ponto de milhar, troca vírgula por ponto
                 str = str.replace(/\./g, '').replace(',', '.');
             }
             return parseFloat(str) || 0;
@@ -442,7 +575,6 @@
             let total = 0;
             document.querySelectorAll('.item-row').forEach(tr => {
                 const qStr = tr.querySelector('.inp-qty').value.trim();
-                // Se Qtd estiver vazio, assume 1 (comportamento natural de serviços)
                 const q = qStr === '' ? 1 : parseBR(qStr);
                 const v = parseBR(tr.querySelector('.inp-val').value);
                 total += q * v;
@@ -467,9 +599,7 @@
             }
         }
 
-        function atualizarPacote(val) {
-            // valor lido diretamente do inputPacote no momento de gerar PDF
-        }
+        function atualizarPacote(val) {}
 
         function newOrcamento() {
             if(!confirm('Limpar tudo?')) return;
@@ -479,7 +609,7 @@
         function showToast(m) {
             const t = document.getElementById('toast');
             t.textContent = m; t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 2000);
+            setTimeout(() => t.classList.remove('show'), 2500);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -523,65 +653,40 @@
             doc.setFillColor(...ORANGE);
             doc.rect(0, 0, 210, 2, 'F');
 
-            if(logo) {
-                doc.addImage(logo, 'PNG', 15, 8, 40, 30, undefined, 'FAST');
-            }
+            if(logo) doc.addImage(logo, 'PNG', 15, 8, 40, 30, undefined, 'FAST');
 
             doc.setFillColor(...ORANGE);
             doc.rect(65, 8, 130, 10, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(255,255,255);
+            doc.setFont('helvetica','bold');
             doc.setFontSize(18);
             doc.text('ORÇAMENTO', 68, 15);
             doc.setFontSize(10);
-            doc.text('Nº ' + num, 192, 15, { align: 'right' });
+            doc.text('Nº ' + num, 192, 15, { align:'right' });
 
             doc.setTextColor(...DARK);
             doc.setFontSize(9);
-            doc.setFont('helvetica', 'bold');
-            doc.text('CLIENTE:', 65, 25);
-            doc.setFont('helvetica', 'normal');
-            doc.text(cliente, 82, 25);
-            doc.line(82, 26, 195, 26);
+            doc.setFont('helvetica','bold'); doc.text('CLIENTE:', 65, 25);
+            doc.setFont('helvetica','normal'); doc.text(cliente, 82, 25); doc.line(82,26,195,26);
+            doc.setFont('helvetica','bold'); doc.text('DATA:', 65, 32);
+            doc.setFont('helvetica','normal'); doc.text(dataStr, 77, 32); doc.line(77,33,110,33);
+            doc.setFont('helvetica','bold'); doc.text('FONE:', 115, 32);
+            doc.setFont('helvetica','normal'); doc.text(telefone, 127, 32); doc.line(127,33,195,33);
+            doc.setFont('helvetica','bold'); doc.text('VEÍCULO:', 15, 45);
+            doc.setFont('helvetica','normal'); doc.text(veiculo, 32, 45); doc.line(32,46,120,46);
+            doc.setFont('helvetica','bold'); doc.text('ANO:', 125, 45);
+            doc.setFont('helvetica','normal'); doc.text(ano, 135, 45); doc.line(135,46,155,46);
+            doc.setFont('helvetica','bold'); doc.text('PLACA:', 160, 45);
+            doc.setFont('helvetica','bold'); doc.text(placa, 175, 45); doc.line(175,46,195,46);
 
-            doc.setFont('helvetica', 'bold');
-            doc.text('DATA:', 65, 32);
-            doc.setFont('helvetica', 'normal');
-            doc.text(dataStr, 77, 32);
-            doc.line(77, 33, 110, 33);
-
-            doc.setFont('helvetica', 'bold');
-            doc.text('FONE:', 115, 32);
-            doc.setFont('helvetica', 'normal');
-            doc.text(telefone, 127, 32);
-            doc.line(127, 33, 195, 33);
-
-            doc.setFont('helvetica', 'bold');
-            doc.text('VEÍCULO:', 15, 45);
-            doc.setFont('helvetica', 'normal');
-            doc.text(veiculo, 32, 45);
-            doc.line(32, 46, 120, 46);
-
-            doc.setFont('helvetica', 'bold');
-            doc.text('ANO:', 125, 45);
-            doc.setFont('helvetica', 'normal');
-            doc.text(ano, 135, 45);
-            doc.line(135, 46, 155, 46);
-
-            doc.setFont('helvetica', 'bold');
-            doc.text('PLACA:', 160, 45);
-            doc.setFont('helvetica', 'bold');
-            doc.text(placa, 175, 45);
-            doc.line(175, 46, 195, 46);
-
-            doc.setFillColor(51, 51, 51);
+            doc.setFillColor(51,51,51);
             doc.rect(15, 52, 180, 8, 'F');
-            doc.setTextColor(255, 255, 255);
+            doc.setTextColor(255,255,255);
             doc.setFontSize(8);
             doc.text('#', 18, 57);
             doc.text('DESCRIÇÃO DO SERVIÇO / PEÇA', 30, 57);
-            doc.text('QTD', 155, 57, { align: 'center' });
-            doc.text('VALOR (R$)', 192, 57, { align: 'right' });
+            doc.text('QTD', 155, 57, {align:'center'});
+            doc.text('VALOR (R$)', 192, 57, {align:'right'});
 
             let y = 60;
             doc.setTextColor(...DARK);
@@ -590,65 +695,53 @@
                 const q = tr.querySelector('.inp-qty').value;
                 const v = tr.querySelector('.inp-val').value;
                 if(!d && !v) return;
-
-                if(i % 2 === 0) doc.setFillColor(250, 246, 240);
-                else doc.setFillColor(240, 232, 218);
-
-                doc.rect(15, y, 180, 7, 'F');
-                doc.text(String(i+1).padStart(2,'0'), 18, y + 4.5);
-                doc.text(d.substring(0, 65), 30, y + 4.5);
-                doc.text(q, 155, y + 4.5, { align: 'center' });
-                doc.text(v, 192, y + 4.5, { align: 'right' });
+                if(i%2===0) doc.setFillColor(250,246,240); else doc.setFillColor(240,232,218);
+                doc.rect(15,y,180,7,'F');
+                doc.text(String(i+1).padStart(2,'0'), 18, y+4.5);
+                doc.text(d.substring(0,65), 30, y+4.5);
+                doc.text(q, 155, y+4.5, {align:'center'});
+                doc.text(v, 192, y+4.5, {align:'right'});
                 y += 7;
             });
 
             doc.setFillColor(...ORANGE);
-            doc.rect(15, y + 2, 180, 12, 'F');
-            doc.setTextColor(255, 255, 255);
+            doc.rect(15,y+2,180,12,'F');
+            doc.setTextColor(255,255,255);
             doc.setFontSize(12);
-            doc.text('TOTAL DO ORÇAMENTO', 20, y + 10);
+            doc.text('TOTAL DO ORÇAMENTO', 20, y+10);
             doc.setFontSize(16);
             const isPacote = document.getElementById('chkPacote').checked;
             let totalText;
             if (isPacote) {
-                const rawPacote = document.getElementById('inputPacote').value.trim();
-                totalText = rawPacote ? 'R$ ' + rawPacote : 'R$ 0,00';
+                const raw = document.getElementById('inputPacote').value.trim();
+                totalText = raw ? 'R$ ' + raw : 'R$ 0,00';
             } else {
                 totalText = document.getElementById('totalDisplay').textContent;
             }
-            doc.text(totalText, 192, y + 10, { align: 'right' });
+            doc.text(totalText, 192, y+10, {align:'right'});
 
             y += 20;
-            doc.setTextColor(80, 80, 80);
-            doc.setFontSize(8);
+            doc.setTextColor(80,80,80); doc.setFontSize(8);
             const venc = calcVencimento(dataVal);
             const vencStr = venc ? formatarData(venc) : '';
-            doc.setFont('helvetica', 'bold');
-            doc.text('ATENÇÃO:', 15, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Este orçamento é válido por 15 dias (${dataStr}), vencendo em ${vencStr}.`, 15, y + 4);
-            doc.text('Após aprovação, podem ocorrer complementos de orçamento durante a desmontagem,', 15, y + 8);
-            doc.text('situação em que o cliente será previamente comunicado para nova autorização.', 15, y + 11);
+            doc.setFont('helvetica','bold'); doc.text('ATENÇÃO:', 15, y);
+            doc.setFont('helvetica','normal');
+            doc.text(`Este orçamento é válido por 15 dias (${dataStr}), vencendo em ${vencStr}.`, 15, y+4);
+            doc.text('Após aprovação, podem ocorrer complementos durante a desmontagem,', 15, y+8);
+            doc.text('situação em que o cliente será previamente comunicado para nova autorização.', 15, y+11);
 
-            doc.setFillColor(34, 34, 34);
-            doc.rect(0, 270, 210, 27, 'F');
-            doc.setFillColor(...ORANGE);
-            doc.rect(0, 270, 210, 1, 'F');
-
-            doc.setTextColor(200, 200, 200);
-            doc.setFontSize(8);
+            doc.setFillColor(34,34,34); doc.rect(0,270,210,27,'F');
+            doc.setFillColor(...ORANGE); doc.rect(0,270,210,1,'F');
+            doc.setTextColor(200,200,200); doc.setFontSize(8);
             doc.text('Rua Maranhão, 13, Bairro Industrial — Contagem, MG', 15, 278);
             doc.text('CEP: 32.230-440 | CNPJ: 48.549.990/0001-48', 15, 283);
-
-            doc.setTextColor(...ORANGE);
-            doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
-            doc.text('FONSECAR', 195, 280, { align: 'right' });
-            doc.setTextColor(255, 255, 255);
-            doc.text('31 99273-0811', 195, 288, { align: 'right' });
+            doc.setTextColor(...ORANGE); doc.setFontSize(16); doc.setFont('helvetica','bold');
+            doc.text('FONSECAR', 195, 280, {align:'right'});
+            doc.setTextColor(255,255,255);
+            doc.text('31 99273-0811', 195, 288, {align:'right'});
 
             doc.save(`orcamento_${num || 'sem_numero'}.pdf`);
-            showToast('PDF gerado!');
+            showToast('PDF gerado com sucesso!');
         }
     </script>
 </body>
