@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#c0390b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fonsecar">
+<title>Fonsecar – Orçamento</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#1a1a1a;font-family:Arial,sans-serif;min-height:100dvh;display:flex;flex-direction:column;align-items:center}
+.topbar{width:100%;background:#c0390b;color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.topbar h1{font-size:1.1rem;font-weight:700;letter-spacing:.5px}
+.btn-pdf{background:#fff;color:#c0390b;border:none;border-radius:6px;padding:8px 16px;font-size:.9rem;font-weight:700;cursor:pointer}
+.btn-pdf:active{opacity:.8}
+.canvas-wrap{position:relative;width:100%;max-width:600px;margin:12px auto;padding:0 4px}
+.canvas-wrap img.fundo{width:100%;display:block;border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.5)}
+.field{position:absolute;background:transparent;border:none;outline:none;font-family:Arial,sans-serif;color:#1a1a1a;font-weight:600;padding:0 2px}
+.field:focus{background:rgba(255,220,180,.6);border-radius:3px}
+.field::placeholder{color:rgba(80,40,0,.3);font-weight:400}
+#f-data{top:19.1%;left:47%;width:50%;font-size:clamp(9px,2.5vw,14px)}
+#f-cliente{top:22.5%;left:47%;width:50%;font-size:clamp(9px,2.5vw,14px)}
+#f-telefone{top:25.8%;left:47%;width:50%;font-size:clamp(9px,2.5vw,14px)}
+#f-veiculo{top:29.5%;left:15%;width:34%;font-size:clamp(9px,2.5vw,14px)}
+#f-ano{top:29.5%;left:57%;width:12%;font-size:clamp(9px,2.5vw,14px)}
+#f-placa{top:29.5%;left:77%;width:18%;font-size:clamp(9px,2.5vw,14px)}
+.linha-desc{left:9%;width:53%;font-size:clamp(7px,2vw,11px)}
+.linha-qtd{left:67%;width:12%;font-size:clamp(7px,2vw,11px);text-align:center}
+.linha-val{left:82%;width:17%;font-size:clamp(7px,2vw,11px);text-align:right}
+#f-total{top:88.4%;left:82%;width:17%;font-size:clamp(8px,2.2vw,13px);font-weight:700;text-align:right;color:#c0390b}
+.extras{width:100%;max-width:600px;margin:0 auto 24px;padding:0 8px}
+.extras-card{background:#2a2a2a;border-radius:10px;padding:14px}
+.extras-card h2{color:#e8813a;font-size:.9rem;margin-bottom:10px;border-bottom:1px solid #444;padding-bottom:6px}
+.extras-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fw label{display:block;color:#aaa;font-size:.7rem;margin-bottom:2px}
+.fw input{width:100%;background:#333;border:1px solid #555;border-radius:5px;padding:6px 8px;color:#eee;font-size:.85rem}
+.fw input:focus{outline:none;border-color:#e8813a}
+@media print{
+  body{background:#fff}
+  .topbar,.extras{display:none}
+  .canvas-wrap{margin:0;padding:0;max-width:100%}
+  .canvas-wrap img.fundo{border-radius:0;box-shadow:none}
+  @page{size:A4 portrait;margin:0}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>🔧 Fonsecar – Orçamento</h1>
+  <button class="btn-pdf" onclick="window.print()">🖨️ Baixar PDF</button>
+</div>
+<div class="canvas-wrap" id="canvas">
+  <img class="fundo" src="assets/modelo.jpg" alt="Orçamento Fonsecar">
+  <input class="field" id="f-data"     placeholder="dd/mm/aaaa">
+  <input class="field" id="f-cliente"  placeholder="Nome do cliente">
+  <input class="field" id="f-telefone" placeholder="(31) 00000-0000" type="tel">
+  <input class="field" id="f-veiculo"  placeholder="Modelo">
+  <input class="field" id="f-ano"      placeholder="Ano" maxlength="4">
+  <input class="field" id="f-placa"    placeholder="Placa" maxlength="8">
+  <input class="field" id="f-total" placeholder="R$ 0,00" readonly tabindex="-1">
+</div>
+<div class="extras">
+  <div class="extras-card">
+    <h2>📋 Dados extras do veículo (internos)</h2>
+    <div class="extras-grid">
+      <div class="fw"><label>Cor</label><input type="text" placeholder="Ex: Prata"></div>
+      <div class="fw"><label>KM</label><input type="text" placeholder="Ex: 85.000"></div>
+      <div class="fw"><label>Chassi</label><input type="text" placeholder="Chassi"></div>
+      <div class="fw"><label>Combustível</label><input type="text" placeholder="Gasolina / Álcool"></div>
+      <div class="fw" style="grid-column:1/-1"><label>Observações</label><input type="text" placeholder="Observações internas"></div>
+    </div>
+  </div>
+</div>
+<script>
+const LINHA_TOP = 34.1;
+const LINHA_STEP = 2.76;
+const canvas = document.getElementById('canvas');
+
+function criarLinhas(){
+  for(let i=1;i<=18;i++){
+    const top=(LINHA_TOP+(i-1)*LINHA_STEP).toFixed(2)+'%';
+    ['desc','qtd','val'].forEach(t=>{
+      const inp=document.createElement('input');
+      inp.className='field linha-'+t;
+      inp.style.top=top;
+      inp.id='l'+i+'-'+t;
+      if(t==='val'){inp.addEventListener('input',calcTotal);}
+      canvas.appendChild(inp);
+    });
+  }
+}
+
+function calcTotal(){
+  let tot=0;
+  for(let i=1;i<=18;i++){
+    const v=document.getElementById('l'+i+'-val');
+    if(v){tot+=parseFloat(v.value.replace(',','.').replace(/[^0-9.]/g,''))||0;}
+  }
+  document.getElementById('f-total').value=tot.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+}
+
+document.getElementById('f-data').value=new Date().toLocaleDateString('pt-BR');
+criarLinhas();
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{});}
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
-const CACHE = 'fonsecar-orcamento-v1';
-const ASSETS = ['./', './orcamento-pwa.html', './manifest.webmanifest', './sw.js', './assets/modelo.jpg', './assets/icon.svg'];
-self.addEventListener('install', event => { event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS))); self.skipWaiting(); });
-self.addEventListener('activate', event => { event.waitUntil(self.clients.claim()); });
-self.addEventListener('fetch', event => { event.respondWith(caches.match(event.request).then(resp => resp || fetch(event.request))); });
+const CACHE='fonsecar-v2';
+const FILES=['./','./index.html','./manifest.webmanifest','./assets/modelo.jpg','./assets/logo.png'];
+self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)));self.skipWaiting();});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim();});
+self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));});
