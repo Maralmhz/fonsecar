@@ -388,7 +388,7 @@
             const venc = calcVencimento(dataVal);
             
             div.innerHTML = `
-                <strong>ATENÇÃO:</strong> Este orçamento é válido por 15 dias (${formatarData(emissao)}), vencendo em <strong>${formatarData(venc)}</strong>.<br>
+                <strong>ATENÇÃO:</strong> Este orçamento é válido por 15 dias (${formatarData(emissao)}), vencendo em <strong>${formatarData(venc)}</strong>.<br><br>
                 Após aprovação, podem ocorrer complementos de orçamento durante a desmontagem, situação em que o cliente será previamente comunicado para nova autorização.
             `;
         }
@@ -427,6 +427,7 @@
                 total += q * v;
             });
             document.getElementById('totalDisplay').textContent = 'R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits:2});
+            return total;
         }
 
         function newOrcamento() {
@@ -447,14 +448,170 @@
             gerarNumero();
         });
 
+        // ── LOGO COMO BASE64 ──
+        async function carregarLogoBase64() {
+            try {
+                const resp = await fetch('logo.png');
+                const blob = await resp.blob();
+                return await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            } catch (e) { return null; }
+        }
+
         async function gerarPDF() {
             showToast('Gerando PDF...');
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+            const logo = await carregarLogoBase64();
             
-            // Simples print para o exemplo, mas no código real você usaria o doc.text etc.
-            // Para manter a fidelidade, o ideal é usar o html2canvas ou desenhar o PDF manualmente.
-            window.print(); 
+            const num = document.getElementById('num').value;
+            const dataVal = document.getElementById('data').value;
+            const dataStr = dataVal ? formatarData(new Date(dataVal + 'T12:00:00')) : '';
+            const cliente = document.getElementById('cliente').value;
+            const telefone = document.getElementById('telefone').value;
+            const veiculo = document.getElementById('veiculo').value;
+            const ano = document.getElementById('ano').value;
+            const placa = document.getElementById('placa').value.toUpperCase();
+
+            // Cores
+            const ORANGE = [200, 75, 0];
+            const DARK = [26, 10, 0];
+
+            // ── Topo Laranja Fino ──
+            doc.setFillColor(...ORANGE);
+            doc.rect(0, 0, 210, 2, 'F');
+
+            // ── Header: Logo esquerda, campos direita ──
+            if(logo) {
+                doc.addImage(logo, 'PNG', 15, 8, 40, 30, undefined, 'FAST');
+            }
+            
+            // Banner "ORÇAMENTO"
+            doc.setFillColor(...ORANGE);
+            doc.rect(65, 8, 130, 10, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(18);
+            doc.text('ORÇAMENTO', 68, 15);
+            
+            doc.setFontSize(10);
+            doc.text('Nº ' + num, 192, 15, { align: 'right' });
+
+            // Campos do Header
+            doc.setTextColor(...DARK);
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'bold');
+            doc.text('CLIENTE:', 65, 25);
+            doc.setFont('helvetica', 'normal');
+            doc.text(cliente, 82, 25);
+            doc.line(82, 26, 195, 26);
+
+            doc.setFont('helvetica', 'bold');
+            doc.text('DATA:', 65, 32);
+            doc.setFont('helvetica', 'normal');
+            doc.text(dataStr, 77, 32);
+            doc.line(77, 33, 110, 33);
+
+            doc.setFont('helvetica', 'bold');
+            doc.text('FONE:', 115, 32);
+            doc.setFont('helvetica', 'normal');
+            doc.text(telefone, 127, 32);
+            doc.line(127, 33, 195, 33);
+
+            // Veículo row
+            doc.setFont('helvetica', 'bold');
+            doc.text('VEÍCULO:', 15, 45);
+            doc.setFont('helvetica', 'normal');
+            doc.text(veiculo, 32, 45);
+            doc.line(32, 46, 120, 46);
+
+            doc.setFont('helvetica', 'bold');
+            doc.text('ANO:', 125, 45);
+            doc.setFont('helvetica', 'normal');
+            doc.text(ano, 135, 45);
+            doc.line(135, 46, 155, 46);
+
+            doc.setFont('helvetica', 'bold');
+            doc.text('PLACA:', 160, 45);
+            doc.setFont('helvetica', 'bold');
+            doc.text(placa, 175, 45);
+            doc.line(175, 46, 195, 46);
+
+            // ── Tabela ──
+            doc.setFillColor(51, 51, 51);
+            doc.rect(15, 52, 180, 8, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(8);
+            doc.text('#', 18, 57);
+            doc.text('DESCRIÇÃO DO SERVIÇO / PEÇA', 30, 57);
+            doc.text('QTD', 155, 57, { align: 'center' });
+            doc.text('VALOR (R$)', 192, 57, { align: 'right' });
+
+            let y = 60;
+            doc.setTextColor(...DARK);
+            document.querySelectorAll('.item-row').forEach((tr, i) => {
+                const d = tr.querySelector('.inp-desc').value;
+                const q = tr.querySelector('.inp-qty').value;
+                const v = tr.querySelector('.inp-val').value;
+                if(!d && !v) return;
+
+                if(i % 2 === 0) doc.setFillColor(250, 246, 240);
+                else doc.setFillColor(240, 232, 218);
+                
+                doc.rect(15, y, 180, 7, 'F');
+                doc.text(String(i+1).padStart(2,'0'), 18, y + 4.5);
+                doc.text(d.substring(0, 65), 30, y + 4.5);
+                doc.text(q, 155, y + 4.5, { align: 'center' });
+                doc.text(v, 192, y + 4.5, { align: 'right' });
+                y += 7;
+            });
+
+            // Total
+            doc.setFillColor(...ORANGE);
+            doc.rect(15, y + 2, 180, 12, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(12);
+            doc.text('TOTAL DO ORÇAMENTO', 20, y + 10);
+            doc.setFontSize(16);
+            doc.text(document.getElementById('totalDisplay').textContent, 192, y + 10, { align: 'right' });
+
+            // Validade
+            y += 20;
+            doc.setTextColor(80, 80, 80);
+            doc.setFontSize(8);
+            const venc = calcVencimento(dataVal);
+            const vencStr = venc ? formatarData(venc) : '';
+            doc.setFont('helvetica', 'bold');
+            doc.text('ATENÇÃO:', 15, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Este orçamento é válido por 15 dias (${dataStr}), vencendo em ${vencStr}.`, 15, y + 4);
+            doc.text('Após aprovação, podem ocorrer complementos de orçamento durante a desmontagem,', 15, y + 8);
+            doc.text('situação em que o cliente será previamente comunicado para nova autorização.', 15, y + 11);
+
+            // Footer
+            doc.setFillColor(34, 34, 34);
+            doc.rect(0, 270, 210, 27, 'F');
+            doc.setFillColor(...ORANGE);
+            doc.rect(0, 270, 210, 1, 'F');
+            
+            doc.setTextColor(200, 200, 200);
+            doc.setFontSize(8);
+            doc.text('Rua Maranhão, 13, Bairro Industrial — Contagem, MG', 15, 278);
+            doc.text('CEP: 32.230-440 | CNPJ: 48.549.990/0001-48', 15, 283);
+            
+            doc.setTextColor(...ORANGE);
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text('FONSECAR', 195, 280, { align: 'right' });
+            doc.setTextColor(255, 255, 255);
+            doc.text('31 99273-0811', 195, 288, { align: 'right' });
+
+            doc.save(`orcamento_${num || 'sem_numero'}.pdf`);
+            showToast('PDF gerado!');
         }
     </script>
 </body>
