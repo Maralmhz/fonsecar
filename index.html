@@ -1,336 +1,155 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#C84B00">
-  <title>Fonsecar - Orçamento</title>
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <style>
-    :root {
-      --orange: #C84B00;
-      --orange-dark: #9e3a00;
-      --dark: #1a0a00;
-      --cream: #f9f3ea;
-      --border: #e0cdb5;
-      --row-odd: #fffaf4;
-      --row-even: #f5ede0;
-      --text: #2a1500;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      height: 100%; background: #111;
-      font-family: 'Oswald', sans-serif;
-      overscroll-behavior: none;
-    }
-    .topbar {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      background: var(--dark);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 16px; height: 56px;
-      border-bottom: 2px solid var(--orange);
-      box-shadow: 0 2px 20px rgba(200,75,0,0.4);
-    }
-    .topbar-logo { display: flex; align-items: center; gap: 10px; }
-    .topbar-logo img { width: 42px; height: 42px; object-fit: contain; border-radius: 4px; }
-    .topbar-logo h1 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: white; letter-spacing: 2px; line-height: 1; }
-    .topbar-logo h1 span { display: block; font-size: 10px; color: #f4a96a; letter-spacing: 1px; font-family: 'Oswald', sans-serif; font-weight: 400; }
-    .btn-new { background: var(--orange); color: white; border: none; border-radius: 6px; padding: 8px 14px; font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 1px; cursor: pointer; }
-    main { padding-top: 56px; padding-bottom: 80px; display: flex; justify-content: center; background: #1a0f05; }
-    .doc { width: 100%; max-width: 480px; background: var(--cream); box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
-    .doc-header { background: var(--cream); display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px 10px; border-bottom: 2px solid var(--orange); }
-    .header-logo-col img { width: 110px; height: 110px; object-fit: contain; }
-    .header-info-col { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-    .orcamento-title { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--orange); letter-spacing: 3px; line-height: 1; }
-    .field-group { display: flex; align-items: center; gap: 6px; }
-    .field-label { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 11px; color: var(--orange-dark); white-space: nowrap; min-width: 48px; }
-    .field-input { flex: 1; border: none; border-bottom: 1px solid var(--border); background: transparent; font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--dark); padding: 3px 4px; outline: none; min-width: 0; }
-    .field-input:focus { border-bottom-color: var(--orange); background: rgba(200,75,0,0.05); }
-    .vehicle-row { display: flex; gap: 10px; flex-wrap: wrap; padding: 8px 16px; border-bottom: 1px solid var(--border); background: #fff8f0; }
-    .items-table { width: 100%; border-collapse: collapse; }
-    .items-table thead tr { background: var(--orange); }
-    .items-table thead th { font-family: 'Bebas Neue', sans-serif; font-size: 13px; color: white; letter-spacing: 1px; padding: 8px 6px; text-align: left; }
-    .items-table thead th:nth-child(1) { width: 36px; text-align: center; }
-    .items-table thead th:nth-child(3) { width: 80px; text-align: center; }
-    .items-table thead th:nth-child(4) { width: 90px; text-align: right; }
-    .item-row td { border-bottom: 1px solid var(--border); padding: 0; vertical-align: middle; }
-    .item-row:nth-child(odd) td { background: var(--row-odd); }
-    .item-row:nth-child(even) td { background: var(--row-even); }
-    .item-row .num { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 11px; color: var(--orange-dark); text-align: center; padding: 0 4px; user-select: none; }
-    .item-row input { border: none; background: transparent; font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--dark); width: 100%; outline: none; padding: 7px 6px; }
-    .item-row input::placeholder { color: #cbb89e; font-size: 10px; }
-    .item-row input:focus { background: rgba(200,75,0,0.07); }
-    .item-row .inp-qty { text-align: center; }
-    .item-row .inp-val { text-align: right; }
-    .total-row { background: var(--orange) !important; display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; }
-    .total-label { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: white; letter-spacing: 2px; }
-    .total-value { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: white; letter-spacing: 1px; }
-    .doc-footer { background: #fff8f0; padding: 12px 16px; display: flex; gap: 12px; align-items: flex-start; border-top: 2px solid var(--border); }
-    .footer-info { flex: 1; font-size: 11px; color: var(--dark); line-height: 1.6; }
-    .footer-info .phone { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: var(--orange); letter-spacing: 1px; }
-    .footer-gears { opacity: 0.15; font-size: 48px; line-height: 1; }
-    .obs-section { padding: 8px 16px; border-top: 1px solid var(--border); }
-    .obs-section textarea { width: 100%; border: 1px solid var(--border); background: #fff8f0; border-radius: 4px; font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--dark); padding: 6px; outline: none; resize: none; height: 56px; }
-    .obs-section textarea:focus { border-color: var(--orange); }
-    .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--dark); display: flex; border-top: 2px solid var(--orange); z-index: 100; }
-    .bottom-bar button { flex: 1; padding: 14px 0; background: none; border: none; color: #f4a96a; font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 1px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; border-right: 1px solid rgba(200,75,0,0.3); }
-    .bottom-bar button:last-child { border-right: none; }
-    .bottom-bar button:active { background: rgba(200,75,0,0.2); }
-    .bottom-bar button svg { width: 20px; height: 20px; }
-    @media print {
-      .topbar, .bottom-bar, .btn-new { display: none !important; }
-      main { padding: 0 !important; background: white !important; }
-      body { background: white !important; }
-      .doc { box-shadow: none !important; max-width: 100% !important; width: 100% !important; }
-    }
-    @page { size: A4 portrait; margin: 10mm; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fonsecar - Orçamento</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--orange:#c0440a;--orange-dark:#8a2e05;--dark:#1a1a1a;--border:rgba(139,60,5,0.45);--cream:#f9f3ea;--text:#2a1500}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#1a1a1a;font-family:'Oswald',sans-serif;overflow-x:hidden}
+.topbar{position:fixed;top:0;left:0;right:0;height:60px;background:var(--orange);display:flex;align-items:center;justify-content:center;gap:12px;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.4)}
+.topbar img{height:40px;object-fit:contain}
+.topbar h1{color:#fff;font-size:clamp(18px,4vw,24px);font-weight:600;letter-spacing:0.5px}
+#wrap{position:relative;width:min(540px,100vw);margin:70px auto 90px;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.5)}
+#wrap img#bg{display:block;width:100%;height:auto}
+.f{position:absolute;background:transparent;border:none;border-bottom:1.5px solid var(--border);outline:none;font-family:Arial,sans-serif;font-size:clamp(7px,1.8vw,11px);color:var(--text);height:2.4%;padding:0 2px 1px;line-height:1}
+.f:focus{background:rgba(192,68,10,0.07);border-bottom-color:var(--orange)}
+.tc{text-align:center}
+.tr{text-align:right}
+input.f[type="date"]{font-size:clamp(6px,1.6vw,10px)}
+#total-box{position:absolute;background:transparent;color:#fff;font-weight:700;font-size:clamp(8px,2vw,12px);text-align:right;padding-right:4px;display:flex;align-items:center;justify-content:flex-end;pointer-events:none}
+.btns{position:fixed;bottom:0;left:0;right:0;height:70px;background:var(--orange-dark);display:flex;align-items:center;justify-content:center;gap:12px;padding:0 16px;z-index:100;box-shadow:0 -2px 10px rgba(0,0,0,0.4)}
+.btns button{background:var(--orange);color:#fff;border:none;border-radius:6px;padding:12px 20px;font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
+.btns button:hover{background:#d84e0e;transform:translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,0.4)}
+.btns button:active{transform:translateY(0)}
+@media print{
+.topbar,.btns{display:none}
+#wrap{margin:0;box-shadow:none;max-width:100%}
+.f{border-bottom:none!important}
+}
+</style>
 </head>
 <body>
-
-<header class="topbar">
-  <div class="topbar-logo">
-    <img src="assets/logo.jpg" alt="Fonsecar">
-    <h1>FONSECAR<span>Auto Mecânica</span></h1>
-  </div>
-  <button class="btn-new" onclick="newOrcamento()">+ NOVO</button>
-</header>
-
-<main>
-  <div class="doc" id="docRoot">
-    <div class="doc-header">
-      <div class="header-logo-col">
-        <img src="assets/logo.jpg" alt="Fonsecar Logo">
-      </div>
-      <div class="header-info-col">
-        <div class="orcamento-title">ORÇAMENTO</div>
-        <div class="field-group">
-          <span class="field-label">Nº</span>
-          <input class="field-input" id="num" style="width:70px" placeholder="0001" maxlength="6">
-          <span class="field-label" style="margin-left:8px">Data</span>
-          <input class="field-input" id="data" type="date" style="width:130px">
-        </div>
-        <div class="field-group">
-          <span class="field-label">Cliente</span>
-          <input class="field-input" id="cliente" placeholder="Nome completo">
-        </div>
-        <div class="field-group">
-          <span class="field-label">Telefone</span>
-          <input class="field-input" id="telefone" placeholder="(31) 9 0000-0000" inputmode="tel">
-        </div>
-      </div>
-    </div>
-    <div class="vehicle-row">
-      <div class="field-group" style="flex:3">
-        <span class="field-label">Veículo</span>
-        <input class="field-input" id="veiculo" placeholder="Modelo / Marca">
-      </div>
-      <div class="field-group" style="flex:1">
-        <span class="field-label">Ano</span>
-        <input class="field-input" id="ano" placeholder="2021" maxlength="4" inputmode="numeric">
-      </div>
-      <div class="field-group" style="flex:1">
-        <span class="field-label">Placa</span>
-        <input class="field-input" id="placa" placeholder="ABC-1234" maxlength="8" style="text-transform:uppercase">
-      </div>
-    </div>
-    <div class="vehicle-row">
-      <div class="field-group" style="flex:1">
-        <span class="field-label">Cor</span>
-        <input class="field-input" id="cor" placeholder="Prata">
-      </div>
-      <div class="field-group" style="flex:1">
-        <span class="field-label">KM</span>
-        <input class="field-input" id="km" placeholder="45.000" inputmode="numeric">
-      </div>
-      <div class="field-group" style="flex:1">
-        <span class="field-label">Comb.</span>
-        <input class="field-input" id="comb" placeholder="Flex">
-      </div>
-    </div>
-    <table class="items-table">
-      <thead>
-        <tr>
-          <th>Nº</th>
-          <th>DESCRIÇÃO</th>
-          <th style="text-align:center">QTDE</th>
-          <th style="text-align:right">VALOR R$</th>
-        </tr>
-      </thead>
-      <tbody id="itemsBody"></tbody>
-    </table>
-    <div class="total-row">
-      <span class="total-label">TOTAL</span>
-      <span class="total-value" id="totalDisplay">R$ 0,00</span>
-    </div>
-    <div class="obs-section">
-      <div class="field-label" style="margin-bottom:4px">Observações</div>
-      <textarea id="obs" placeholder="Prazo de entrega, garantia, condições..."></textarea>
-    </div>
-    <div class="doc-footer">
-      <div class="footer-info">
-        <div>📍 Rua Maranhão, 13 - Bairro Industrial</div>
-        <div>Contagem - MG &middot; CEP 32230-440</div>
-        <div>CNPJ 48.549.990/0001-48</div>
-        <div class="phone">☎ 31 99273-0811</div>
-      </div>
-      <div class="footer-gears">⚙⚙</div>
-    </div>
-  </div>
-</main>
-
-<div class="bottom-bar">
-  <button onclick="saveDraft()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-    Salvar
-  </button>
-  <button onclick="downloadPDF()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    Baixar PDF
-  </button>
-  <button onclick="printDoc()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-    Imprimir
-  </button>
-  <button onclick="sharePDF()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-    Enviar
-  </button>
+<div class="topbar">
+<img src="assets/logo.png" alt="Fonsecar">
+<h1>ORÇAMENTO</h1>
 </div>
-
+<div id="wrap">
+<img id="bg" src="assets/modelo.jpeg" alt="Orçamento Fonsecar" crossorigin="anonymous">
+<input class="f" id="data" type="date" style="top:9.6%;left:67.2%;width:31%">
+<input class="f" id="cliente" type="text" placeholder="" style="top:11.4%;left:67.2%;width:31%">
+<input class="f" id="telefone" type="tel" placeholder="" style="top:13.2%;left:67.2%;width:31%">
+<input class="f" id="veiculo" type="text" placeholder="" style="top:14.9%;left:14%;width:48%">
+<input class="f" id="ano" type="text" placeholder="" style="top:14.9%;left:66%;width:9%">
+<input class="f" id="placa" type="text" placeholder="" style="top:14.9%;left:78%;width:15%">
+<input class="f" id="d1" type="text" style="top:18.4%;left:9.8%;width:56.5%">
+<input class="f tc" id="q1" type="text" style="top:18.4%;left:68.6%;width:12.9%">
+<input class="f tr" id="v1" type="text" style="top:18.4%;left:83.8%;width:14.8%">
+<input class="f" id="d2" type="text" style="top:19.67%;left:9.8%;width:56.5%">
+<input class="f tc" id="q2" type="text" style="top:19.67%;left:68.6%;width:12.9%">
+<input class="f tr" id="v2" type="text" style="top:19.67%;left:83.8%;width:14.8%">
+<input class="f" id="d3" type="text" style="top:20.94%;left:9.8%;width:56.5%">
+<input class="f tc" id="q3" type="text" style="top:20.94%;left:68.6%;width:12.9%">
+<input class="f tr" id="v3" type="text" style="top:20.94%;left:83.8%;width:14.8%">
+<input class="f" id="d4" type="text" style="top:22.21%;left:9.8%;width:56.5%">
+<input class="f tc" id="q4" type="text" style="top:22.21%;left:68.6%;width:12.9%">
+<input class="f tr" id="v4" type="text" style="top:22.21%;left:83.8%;width:14.8%">
+<input class="f" id="d5" type="text" style="top:23.48%;left:9.8%;width:56.5%">
+<input class="f tc" id="q5" type="text" style="top:23.48%;left:68.6%;width:12.9%">
+<input class="f tr" id="v5" type="text" style="top:23.48%;left:83.8%;width:14.8%">
+<input class="f" id="d6" type="text" style="top:24.75%;left:9.8%;width:56.5%">
+<input class="f tc" id="q6" type="text" style="top:24.75%;left:68.6%;width:12.9%">
+<input class="f tr" id="v6" type="text" style="top:24.75%;left:83.8%;width:14.8%">
+<input class="f" id="d7" type="text" style="top:26.02%;left:9.8%;width:56.5%">
+<input class="f tc" id="q7" type="text" style="top:26.02%;left:68.6%;width:12.9%">
+<input class="f tr" id="v7" type="text" style="top:26.02%;left:83.8%;width:14.8%">
+<input class="f" id="d8" type="text" style="top:27.29%;left:9.8%;width:56.5%">
+<input class="f tc" id="q8" type="text" style="top:27.29%;left:68.6%;width:12.9%">
+<input class="f tr" id="v8" type="text" style="top:27.29%;left:83.8%;width:14.8%">
+<input class="f" id="d9" type="text" style="top:28.56%;left:9.8%;width:56.5%">
+<input class="f tc" id="q9" type="text" style="top:28.56%;left:68.6%;width:12.9%">
+<input class="f tr" id="v9" type="text" style="top:28.56%;left:83.8%;width:14.8%">
+<input class="f" id="d10" type="text" style="top:29.83%;left:9.8%;width:56.5%">
+<input class="f tc" id="q10" type="text" style="top:29.83%;left:68.6%;width:12.9%">
+<input class="f tr" id="v10" type="text" style="top:29.83%;left:83.8%;width:14.8%">
+<input class="f" id="d11" type="text" style="top:31.1%;left:9.8%;width:56.5%">
+<input class="f tc" id="q11" type="text" style="top:31.1%;left:68.6%;width:12.9%">
+<input class="f tr" id="v11" type="text" style="top:31.1%;left:83.8%;width:14.8%">
+<input class="f" id="d12" type="text" style="top:32.37%;left:9.8%;width:56.5%">
+<input class="f tc" id="q12" type="text" style="top:32.37%;left:68.6%;width:12.9%">
+<input class="f tr" id="v12" type="text" style="top:32.37%;left:83.8%;width:14.8%">
+<input class="f" id="d13" type="text" style="top:33.64%;left:9.8%;width:56.5%">
+<input class="f tc" id="q13" type="text" style="top:33.64%;left:68.6%;width:12.9%">
+<input class="f tr" id="v13" type="text" style="top:33.64%;left:83.8%;width:14.8%">
+<input class="f" id="d14" type="text" style="top:34.91%;left:9.8%;width:56.5%">
+<input class="f tc" id="q14" type="text" style="top:34.91%;left:68.6%;width:12.9%">
+<input class="f tr" id="v14" type="text" style="top:34.91%;left:83.8%;width:14.8%">
+<input class="f" id="d15" type="text" style="top:36.18%;left:9.8%;width:56.5%">
+<input class="f tc" id="q15" type="text" style="top:36.18%;left:68.6%;width:12.9%">
+<input class="f tr" id="v15" type="text" style="top:36.18%;left:83.8%;width:14.8%">
+<input class="f" id="d16" type="text" style="top:37.45%;left:9.8%;width:56.5%">
+<input class="f tc" id="q16" type="text" style="top:37.45%;left:68.6%;width:12.9%">
+<input class="f tr" id="v16" type="text" style="top:37.45%;left:83.8%;width:14.8%">
+<input class="f" id="d17" type="text" style="top:38.72%;left:9.8%;width:56.5%">
+<input class="f tc" id="q17" type="text" style="top:38.72%;left:68.6%;width:12.9%">
+<input class="f tr" id="v17" type="text" style="top:38.72%;left:83.8%;width:14.8%">
+<input class="f" id="d18" type="text" style="top:39.99%;left:9.8%;width:56.5%">
+<input class="f tc" id="q18" type="text" style="top:39.99%;left:68.6%;width:12.9%">
+<input class="f tr" id="v18" type="text" style="top:39.99%;left:83.8%;width:14.8%">
+<input class="f" id="d19" type="text" style="top:41.26%;left:9.8%;width:56.5%">
+<input class="f tc" id="q19" type="text" style="top:41.26%;left:68.6%;width:12.9%">
+<input class="f tr" id="v19" type="text" style="top:41.26%;left:83.8%;width:14.8%">
+<input class="f" id="d20" type="text" style="top:42.53%;left:9.8%;width:56.5%">
+<input class="f tc" id="q20" type="text" style="top:42.53%;left:68.6%;width:12.9%">
+<input class="f tr" id="v20" type="text" style="top:42.53%;left:83.8%;width:14.8%">
+<div id="total-box" style="top:59.11%;left:83.8%;width:14.8%;height:2.34%">R$ 0,00</div>
+</div>
+<div class="btns">
+<button onclick="downloadPDF()">Baixar PDF</button>
+<button onclick="window.print()">Imprimir</button>
+</div>
 <script>
-  const ROWS = 20;
-
-  function buildRows() {
-    const tbody = document.getElementById('itemsBody');
-    tbody.innerHTML = '';
-    for (let i = 1; i <= ROWS; i++) {
-      const tr = document.createElement('tr');
-      tr.className = 'item-row';
-      tr.innerHTML = `
-        <td class="num">${String(i).padStart(2,'0')}</td>
-        <td><input class="inp-desc" placeholder="Descrição do serviço ou peça" oninput="calcTotal()"></td>
-        <td><input class="inp-qty" placeholder="1" inputmode="decimal" oninput="calcTotal()"></td>
-        <td><input class="inp-val" placeholder="0,00" inputmode="decimal" oninput="calcTotal()"></td>
-      `;
-      tbody.appendChild(tr);
-    }
-  }
-
-  function calcTotal() {
-    let total = 0;
-    document.querySelectorAll('.item-row').forEach(tr => {
-      const qty = parseFloat(tr.querySelector('.inp-qty').value.replace(',','.')) || 1;
-      const val = parseFloat(tr.querySelector('.inp-val').value.replace(',','.')) || 0;
-      if (val > 0) total += qty * val;
-    });
-    document.getElementById('totalDisplay').textContent = 'R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
-  }
-
-  function newOrcamento() {
-    if (!confirm('Limpar tudo e iniciar novo orçamento?')) return;
-    ['num','data','cliente','telefone','veiculo','ano','placa','cor','km','comb','obs'].forEach(id => {
-      const el = document.getElementById(id); if (el) el.value = '';
-    });
-    document.querySelectorAll('.item-row input').forEach(inp => inp.value = '');
-    document.getElementById('totalDisplay').textContent = 'R$ 0,00';
-    const n = (parseInt(localStorage.getItem('lastNum') || '0') + 1);
-    document.getElementById('num').value = String(n).padStart(4,'0');
-    document.getElementById('data').value = new Date().toISOString().split('T')[0];
-  }
-
-  function saveDraft() {
-    const data = collectData();
-    localStorage.setItem('fonsecar_draft', JSON.stringify(data));
-    localStorage.setItem('lastNum', parseInt(document.getElementById('num').value) || 0);
-    showToast('✅ Salvo!');
-  }
-
-  function collectData() {
-    const rows = [];
-    document.querySelectorAll('.item-row').forEach(tr => {
-      rows.push({ desc: tr.querySelector('.inp-desc').value, qty: tr.querySelector('.inp-qty').value, val: tr.querySelector('.inp-val').value });
-    });
-    return { num: document.getElementById('num').value, data: document.getElementById('data').value, cliente: document.getElementById('cliente').value, telefone: document.getElementById('telefone').value, veiculo: document.getElementById('veiculo').value, ano: document.getElementById('ano').value, placa: document.getElementById('placa').value, cor: document.getElementById('cor').value, km: document.getElementById('km').value, comb: document.getElementById('comb').value, obs: document.getElementById('obs').value, rows };
-  }
-
-  function loadDraft(d) {
-    if (!d) return;
-    ['num','data','cliente','telefone','veiculo','ano','placa','cor','km','comb','obs'].forEach(id => {
-      if (d[id] !== undefined) { const el = document.getElementById(id); if(el) el.value = d[id]; }
-    });
-    if (d.rows) {
-      const trs = document.querySelectorAll('.item-row');
-      d.rows.forEach((r, i) => {
-        if (trs[i]) { trs[i].querySelector('.inp-desc').value = r.desc||''; trs[i].querySelector('.inp-qty').value = r.qty||''; trs[i].querySelector('.inp-val').value = r.val||''; }
-      });
-    }
-    calcTotal();
-  }
-
-  async function downloadPDF() {
-    showToast('⏳ Gerando PDF...');
-    const { jsPDF } = window.jspdf;
-    try {
-      const canvas = await html2canvas(document.getElementById('docRoot'), { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#f9f3ea' });
-      const imgData = canvas.toDataURL('image/jpeg', 0.92);
-      const pdf = new jsPDF('p','mm','a4');
-      const imgW = 210, imgH = (canvas.height * 210) / canvas.width;
-      if (imgH <= 297) { pdf.addImage(imgData,'JPEG',0,0,imgW,imgH); }
-      else { let y=0, rem=imgH; while(rem>0){ pdf.addImage(imgData,'JPEG',0,y,imgW,imgH); rem-=297; y-=297; if(rem>0) pdf.addPage(); } }
-      const num = document.getElementById('num').value||'orcamento';
-      const cli = document.getElementById('cliente').value.replace(/\s+/g,'_')||'cliente';
-      pdf.save(`Fonsecar_Orcamento_${num}_${cli}.pdf`);
-      showToast('✅ PDF baixado!');
-    } catch(e) { showToast('❌ Erro: '+e.message); }
-  }
-
-  function printDoc() { window.print(); }
-
-  async function sharePDF() {
-    showToast('⏳ Preparando...');
-    const { jsPDF } = window.jspdf;
-    try {
-      const canvas = await html2canvas(document.getElementById('docRoot'), { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#f9f3ea' });
-      const imgData = canvas.toDataURL('image/jpeg', 0.92);
-      const pdf = new jsPDF('p','mm','a4');
-      const imgW = 210, imgH = (canvas.height * 210) / canvas.width;
-      pdf.addImage(imgData,'JPEG',0,0,imgW,Math.min(imgH,297));
-      const blob = pdf.output('blob');
-      const num = document.getElementById('num').value||'orcamento';
-      const file = new File([blob], `Fonsecar_Orcamento_${num}.pdf`, {type:'application/pdf'});
-      if (navigator.canShare && navigator.canShare({files:[file]})) {
-        await navigator.share({ title: 'Orçamento Fonsecar Nº '+num, files:[file] });
-        showToast('✅ Compartilhado!');
-      } else {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href=url; a.download=file.name; a.click();
-        URL.revokeObjectURL(url);
-        showToast('📥 PDF salvo (compartilhamento não disponível aqui)');
-      }
-    } catch(e) { if(e.name!=='AbortError') showToast('❌ '+e.message); }
-  }
-
-  function showToast(msg) {
-    let t = document.getElementById('toast');
-    if (!t) { t=document.createElement('div'); t.id='toast'; t.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1a0a00;color:#f4a96a;padding:10px 20px;border-radius:20px;font-family:Oswald,sans-serif;font-size:14px;z-index:999;border:1px solid #C84B00;box-shadow:0 4px 20px rgba(200,75,0,0.3)'; document.body.appendChild(t); }
-    t.textContent=msg; t.style.display='block';
-    clearTimeout(t._timer); t._timer=setTimeout(()=>{ t.style.display='none'; },2500);
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    buildRows();
-    document.getElementById('data').value = new Date().toISOString().split('T')[0];
-    const draft = localStorage.getItem('fonsecar_draft');
-    if (draft) { try { loadDraft(JSON.parse(draft)); } catch(e) {} }
-    else { document.getElementById('num').value = '0001'; }
-    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(()=>{}); }
-  });
+document.getElementById('data').valueAsDate=new Date();
+const vals=['v1','v2','v3','v4','v5','v6','v7','v8','v9','v10','v11','v12','v13','v14','v15','v16','v17','v18','v19','v20'];
+vals.forEach(id=>document.getElementById(id).addEventListener('input',calcTotal));
+function calcTotal(){
+let t=0;
+vals.forEach(id=>{
+const v=document.getElementById(id).value.replace(/[^0-9,.]/g,'').replace(',','.');
+if(v)t+=parseFloat(v)||0;
+});
+document.getElementById('total-box').textContent='R$ '+t.toFixed(2).replace('.',',');
+}
+function downloadPDF(){
+const box=document.getElementById('total-box');
+const orig=box.style.color;
+box.style.color='transparent';
+html2canvas(document.getElementById('wrap'),{scale:2,useCORS:true}).then(canvas=>{
+const ctx=canvas.getContext('2d');
+const rect=box.getBoundingClientRect();
+const wrap=document.getElementById('wrap').getBoundingClientRect();
+const x=(rect.left-wrap.left)*2;
+const y=(rect.top-wrap.top)*2;
+const w=rect.width*2;
+const h=rect.height*2;
+ctx.fillStyle='#fff';
+ctx.font='bold '+(h*0.5)+'px Arial';
+ctx.textAlign='right';
+ctx.textBaseline='middle';
+ctx.fillText(document.getElementById('total-box').textContent,x+w-8,y+h/2);
+const imgData=canvas.toDataURL('image/png');
+const {jsPDF}=window.jspdf;
+const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+const pdfWidth=210;
+const pdfHeight=(canvas.height*pdfWidth)/canvas.width;
+pdf.addImage(imgData,'PNG',0,0,pdfWidth,pdfHeight);
+pdf.save('orcamento-fonsecar.pdf');
+box.style.color=orig;
+});
+}
 </script>
 </body>
 </html>
